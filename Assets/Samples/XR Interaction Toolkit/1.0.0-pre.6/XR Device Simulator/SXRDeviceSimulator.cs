@@ -166,6 +166,7 @@ namespace UnityEngine.XR.Interaction.Toolkit.Inputs.Simulation
             }
         }
 
+        /* jv
         [SerializeField]
         [Tooltip("The Input System Action used to enable manipulation of the left-hand controller while held. Must be a Button Control.")]
         InputActionReference m_ManipulateLeftAction;
@@ -235,6 +236,7 @@ namespace UnityEngine.XR.Interaction.Toolkit.Inputs.Simulation
             }
         }
 
+        
         [SerializeField]
         [Tooltip("The Input System Action used to toggle enable manipulation of the right-hand controller when pressed. Must be a Button Control.")]
         InputActionReference m_ToggleManipulateRightAction;
@@ -254,6 +256,7 @@ namespace UnityEngine.XR.Interaction.Toolkit.Inputs.Simulation
                 SubscribeToggleManipulateRightAction();
             }
         }
+       
 
         [SerializeField]
         [Tooltip("The Input System Action used to enable manipulation of the HMD while held. Must be a Button Control.")]
@@ -269,6 +272,52 @@ namespace UnityEngine.XR.Interaction.Toolkit.Inputs.Simulation
             {
                 UnsubscribeManipulateHeadAction();
                 m_ManipulateHeadAction = value;
+                SubscribeManipulateHeadAction();
+            }
+        }
+        */
+
+        [SerializeField]
+        [Tooltip("The Input System Action used to translate or rotate the left hand by a scaled amount along or about the x- and y-axes. Must be a Value Vector2 Control.")]
+        InputActionReference m_ManipulateLeftHandAction;
+        public InputActionReference manipulateLeftHandAction
+        {
+            get => m_ManipulateLeftHandAction;
+            set
+            {
+                UnsubscribeManipulateLeftHandAction();
+                m_ManipulateLeftHandAction = value;
+                Debug.Log("L" + value);
+                SubscribeManipulateLeftHandAction();
+            }
+        }
+
+        [SerializeField]
+        [Tooltip("The Input System Action used to translate or rotate the right hand by a scaled amount along or about the x- and y-axes. Must be a Value Vector2 Control.")]
+        InputActionReference m_ManipulateRightHandAction;
+        public InputActionReference manipulateRightHandAction
+        {
+            get => m_ManipulateRightHandAction;
+            set
+            {
+                UnsubscribeManipulateRightHandAction();
+                m_ManipulateRightHandAction = value;
+                Debug.Log("R" + value);
+                SubscribeManipulateRightHandAction();
+            }
+        }
+
+        [SerializeField]
+        [Tooltip("The Input System Action used to translate or rotate the head by a scaled amount along or about the x- and y-axes. Must be a Value Vector2 Control.")]
+        InputActionReference m_ManipulateHeadAction;
+        public InputActionReference manipulateHeadAction
+        {
+            get => m_ManipulateHeadAction;
+            set
+            {
+                UnsubscribeManipulateHeadAction();
+                m_ManipulateHeadAction = value;
+                Debug.Log("H" + value);
                 SubscribeManipulateHeadAction();
             }
         }
@@ -291,6 +340,7 @@ namespace UnityEngine.XR.Interaction.Toolkit.Inputs.Simulation
             {
                 UnsubscribeMouseDeltaAction();
                 m_MouseDeltaAction = value;
+                Debug.Log("M" + value);
                 SubscribeMouseDeltaAction();
             }
         }
@@ -530,6 +580,7 @@ namespace UnityEngine.XR.Interaction.Toolkit.Inputs.Simulation
             }
         }
 
+        
         [SerializeField]
         [Tooltip("The Input System Action used to toggle enable manipulation of the Secondary2DAxis of the controllers when pressed. Must be a Button Control.")]
         InputActionReference m_ToggleSecondary2DAxisTargetAction;
@@ -550,7 +601,8 @@ namespace UnityEngine.XR.Interaction.Toolkit.Inputs.Simulation
                 SubscribeToggleSecondary2DAxisTargetAction();
             }
         }
-
+        
+        /* jv
         [SerializeField]
         [Tooltip("The Input System Action used to control the value of one or more 2D Axis controls on the manipulated controller device(s). Must be a Value Vector2 Control.")]
         InputActionReference m_Axis2DAction;
@@ -575,6 +627,7 @@ namespace UnityEngine.XR.Interaction.Toolkit.Inputs.Simulation
                 SubscribeAxis2DAction();
             }
         }
+        */
 
         [SerializeField]
         [Tooltip("The Input System Action used to control one or more 2D Axis controls on the opposite hand of the exclusively manipulated controller device. Must be a Value Vector2 Control.")]
@@ -1037,9 +1090,13 @@ namespace UnityEngine.XR.Interaction.Toolkit.Inputs.Simulation
         float m_KeyboardYTranslateInput;
         float m_KeyboardZTranslateInput;
 
-        bool m_ManipulateLeftInput;
-        bool m_ManipulateRightInput;
-        bool m_ManipulateHeadInput;
+        //jv bool m_ManipulateLeftInput;
+        //jv bool m_ManipulateRightInput;
+        //jv bool m_ManipulateHeadInput;
+
+        Vector2 m_ManipulateLeftHandInput;
+        Vector2 m_ManipulateRightHandInput;
+        Vector2 m_ManipulateHeadInput;
 
         Vector2 m_MouseDeltaInput;
         Vector2 m_MouseScrollInput;
@@ -1092,6 +1149,7 @@ namespace UnityEngine.XR.Interaction.Toolkit.Inputs.Simulation
             m_RightControllerState.Reset();
         }
 
+
         /// <summary>
         /// See <see cref="MonoBehaviour"/>.
         /// </summary>
@@ -1110,11 +1168,16 @@ namespace UnityEngine.XR.Interaction.Toolkit.Inputs.Simulation
             SubscribeKeyboardXTranslateAction();
             SubscribeKeyboardYTranslateAction();
             SubscribeKeyboardZTranslateAction();
-            SubscribeManipulateLeftAction();
-            SubscribeManipulateRightAction();
-            SubscribeToggleManipulateLeftAction();
-            SubscribeToggleManipulateRightAction();
+            //jv SubscribeManipulateLeftAction();
+            //jv SubscribeManipulateRightAction();
+            //jv SubscribeToggleManipulateLeftAction();
+            //jv SubscribeToggleManipulateRightAction();
+            //jv SubscribeManipulateHeadAction();
+
+            SubscribeManipulateLeftHandAction();
+            SubscribeManipulateRightHandAction();
             SubscribeManipulateHeadAction();
+
             SubscribeMouseDeltaAction();
             SubscribeMouseScrollAction();
             SubscribeRotateModeOverrideAction();
@@ -1128,7 +1191,7 @@ namespace UnityEngine.XR.Interaction.Toolkit.Inputs.Simulation
             SubscribeToggleDevicePositionTargetAction();
             SubscribeTogglePrimary2DAxisTargetAction();
             SubscribeToggleSecondary2DAxisTargetAction();
-            SubscribeAxis2DAction();
+            //jv SubscribeAxis2DAction();
             SubscribeRestingHandAxis2DAction();
             SubscribeGripAction();
             SubscribeTriggerAction();
@@ -1153,11 +1216,16 @@ namespace UnityEngine.XR.Interaction.Toolkit.Inputs.Simulation
             UnsubscribeKeyboardXTranslateAction();
             UnsubscribeKeyboardYTranslateAction();
             UnsubscribeKeyboardZTranslateAction();
-            UnsubscribeManipulateLeftAction();
-            UnsubscribeManipulateRightAction();
-            UnsubscribeToggleManipulateLeftAction();
-            UnsubscribeToggleManipulateRightAction();
+            //jv UnsubscribeManipulateLeftAction();
+            //jv UnsubscribeManipulateRightAction();
+            //jv UnsubscribeToggleManipulateLeftAction();
+            //jv UnsubscribeToggleManipulateRightAction();
+            //jv UnsubscribeManipulateHeadAction();
+
+            UnsubscribeManipulateLeftHandAction();
+            UnsubscribeManipulateRightHandAction();
             UnsubscribeManipulateHeadAction();
+
             UnsubscribeMouseDeltaAction();
             UnsubscribeMouseScrollAction();
             UnsubscribeRotateModeOverrideAction();
@@ -1171,7 +1239,7 @@ namespace UnityEngine.XR.Interaction.Toolkit.Inputs.Simulation
             UnsubscribeToggleDevicePositionTargetAction();
             UnsubscribeTogglePrimary2DAxisTargetAction();
             UnsubscribeToggleSecondary2DAxisTargetAction();
-            UnsubscribeAxis2DAction();
+            //jv UnsubscribeAxis2DAction();
             UnsubscribeRestingHandAxis2DAction();
             UnsubscribeGripAction();
             UnsubscribeTriggerAction();
@@ -1224,16 +1292,21 @@ namespace UnityEngine.XR.Interaction.Toolkit.Inputs.Simulation
             m_RightControllerState.trackingState = (int)(InputTrackingState.Position | InputTrackingState.Rotation);
             m_HMDState.trackingState = (int)(InputTrackingState.Position | InputTrackingState.Rotation);
 
+            /* jv
             if (!m_ManipulateLeftInput && !m_ManipulateRightInput && !m_ManipulateHeadInput)
                 return;
-
+            */
             if (m_CameraTransform == null)
+            {
+                Debug.Log("m_CameraTransform is null.");
                 return;
+            }
 
             var cameraParent = m_CameraTransform.parent;
             var cameraParentRotation = cameraParent != null ? cameraParent.rotation : Quaternion.identity;
             var inverseCameraParentRotation = Quaternion.Inverse(cameraParentRotation);
 
+            /*
             if ((axis2DTargets & Axis2DTargets.Position) != 0)
             {
                 // Determine frame of reference
@@ -1264,198 +1337,270 @@ namespace UnityEngine.XR.Interaction.Toolkit.Inputs.Simulation
                     m_HMDState.devicePosition = m_HMDState.centerEyePosition;
                 }
             }
+            */
 
-            if ((mouseTransformationMode == TransformationMode.Translate && !m_RotateModeOverrideInput && !m_NegateModeInput) ||
-                (mouseTransformationMode == TransformationMode.Rotate || m_RotateModeOverrideInput) && m_NegateModeInput)
+        /* for now, ignore translation.  Only the head needs to translate.  the left and right controls will only rotate
+        if ((mouseTransformationMode == TransformationMode.Translate && !m_RotateModeOverrideInput && !m_NegateModeInput) ||
+            (mouseTransformationMode == TransformationMode.Rotate || m_RotateModeOverrideInput) && m_NegateModeInput)*/
+
+        if (mouseTransformationMode == TransformationMode.Translate)
+        {
+            // Determine frame of reference
+            GetAxes(m_MouseTranslateSpace, m_CameraTransform, out var right, out var up, out var forward);
+
+            // Mouse translation
+            /*
+            var scaledMouseDeltaInput =
+                new Vector3(m_MouseDeltaInput.x * m_MouseXTranslateSensitivity,
+                    m_MouseDeltaInput.y * m_MouseYTranslateSensitivity,
+                    m_MouseScrollInput.y * m_MouseScrollTranslateSensitivity);
+            */
+                var scaledManipulateLeftHandInput =
+                    new Vector3(m_ManipulateLeftHandInput.x * m_MouseXTranslateSensitivity,
+                        m_ManipulateLeftHandInput.y * m_MouseYTranslateSensitivity,
+                        0);
+
+                var scaledManipulateRightHandInput =
+                    new Vector3(m_ManipulateRightHandInput.x * m_MouseXTranslateSensitivity,
+                        m_ManipulateRightHandInput.y * m_MouseYTranslateSensitivity,
+                        0);
+
+                var scaledManipulateHeadInput =
+                    new Vector3(m_ManipulateHeadInput.x * m_MouseXTranslateSensitivity,
+                        0,
+                        m_ManipulateHeadInput.y * m_MouseYTranslateSensitivity
+                        );
+
+
+                Vector3 deltaLeftHand, deltaRightHand, deltaHead;
+            if (m_XConstraintInput && !m_YConstraintInput && m_ZConstraintInput) // XZ
             {
-                // Determine frame of reference
-                GetAxes(m_MouseTranslateSpace, m_CameraTransform, out var right, out var up, out var forward);
+                    /*       deltaPosition =
+                              right * scaledMouseDeltaInput.x +
+                              forward * scaledMouseDeltaInput.y; */
 
-                // Mouse translation
-                var scaledMouseDeltaInput =
-                    new Vector3(m_MouseDeltaInput.x * m_MouseXTranslateSensitivity,
-                        m_MouseDeltaInput.y * m_MouseYTranslateSensitivity,
-                        m_MouseScrollInput.y * m_MouseScrollTranslateSensitivity);
+                    deltaLeftHand =
+                        right * scaledManipulateLeftHandInput.x +
+                        forward * scaledManipulateLeftHandInput.y;
 
-                Vector3 deltaPosition;
-                if (m_XConstraintInput && !m_YConstraintInput && m_ZConstraintInput) // XZ
-                {
-                    deltaPosition =
-                        right * scaledMouseDeltaInput.x +
-                        forward * scaledMouseDeltaInput.y;
+                    deltaRightHand =
+                        right * scaledManipulateRightHandInput.x +
+                        forward * scaledManipulateRightHandInput.y;
+
+                    deltaHead =
+                        right * scaledManipulateHeadInput.x +
+                        forward * scaledManipulateHeadInput.y;
                 }
-                else if (!m_XConstraintInput && m_YConstraintInput && m_ZConstraintInput) // YZ
-                {
-                    deltaPosition =
-                        up * scaledMouseDeltaInput.y +
-                        forward * scaledMouseDeltaInput.x;
+            else if (!m_XConstraintInput && m_YConstraintInput && m_ZConstraintInput) // YZ
+            {
+                    deltaLeftHand = up * scaledManipulateLeftHandInput.y + forward * scaledManipulateLeftHandInput.x;
+                    deltaRightHand = up * scaledManipulateRightHandInput.y + forward * scaledManipulateRightHandInput.x;
+                    deltaHead = up * scaledManipulateHeadInput.y + forward * scaledManipulateHeadInput.x;
+
                 }
                 else if (m_XConstraintInput && !m_YConstraintInput && !m_ZConstraintInput) // X
-                {
-                    deltaPosition =
-                        right * (scaledMouseDeltaInput.x + scaledMouseDeltaInput.y);
+            {
+                    deltaLeftHand = right * (scaledManipulateLeftHandInput.x + scaledManipulateLeftHandInput.y);
+                    deltaRightHand = right * (scaledManipulateRightHandInput.x + scaledManipulateRightHandInput.y);
+                    deltaHead = right * (scaledManipulateHeadInput.x + scaledManipulateHeadInput.y);
                 }
                 else if (!m_XConstraintInput && m_YConstraintInput && !m_ZConstraintInput) // Y
-                {
-                    deltaPosition =
-                        up * (scaledMouseDeltaInput.x + scaledMouseDeltaInput.y);
+            {
+                    deltaLeftHand = up * (scaledManipulateLeftHandInput.x + scaledManipulateLeftHandInput.y);
+                    deltaRightHand = up * (scaledManipulateRightHandInput.x + scaledManipulateRightHandInput.y);
+                    deltaHead = up * (scaledManipulateHeadInput.x + scaledManipulateHeadInput.y);
                 }
                 else if (!m_XConstraintInput && !m_YConstraintInput && m_ZConstraintInput) // Z
-                {
-                    deltaPosition =
-                        forward * (scaledMouseDeltaInput.x + scaledMouseDeltaInput.y);
+            {
+                    deltaLeftHand = forward * (scaledManipulateLeftHandInput.x + scaledManipulateLeftHandInput.y);
+                    deltaRightHand = forward * (scaledManipulateRightHandInput.x + scaledManipulateRightHandInput.y);
+                    deltaHead = forward * (scaledManipulateHeadInput.x + scaledManipulateHeadInput.y);
                 }
                 else
-                {
-                    deltaPosition =
-                        right * scaledMouseDeltaInput.x +
-                        up * scaledMouseDeltaInput.y;
+            {
+                    deltaLeftHand = right * scaledManipulateLeftHandInput.x + up * scaledManipulateLeftHandInput.y;
+                    deltaRightHand = right * scaledManipulateRightHandInput.x + up * scaledManipulateRightHandInput.y;
+                    deltaHead = right * scaledManipulateHeadInput.x + up * scaledManipulateHeadInput.y;
                 }
 
                 // Scroll contribution
-                deltaPosition +=
-                    forward * scaledMouseDeltaInput.z;
+                //jv deltaPosition += forward * scaledMouseDeltaInput.z;
 
-                if (m_ManipulateLeftInput)
-                {
-                    var deltaRotation = GetDeltaRotation(m_MouseTranslateSpace, m_LeftControllerState, inverseCameraParentRotation);
-                    m_LeftControllerState.devicePosition += deltaRotation * deltaPosition;
-                }
+            //if (m_ManipulateLeftInput)
+            //{
+                var deltaRotationL = GetDeltaRotation(m_MouseTranslateSpace, m_LeftControllerState, inverseCameraParentRotation);
+                m_LeftControllerState.devicePosition += deltaRotationL * deltaLeftHand;
+            //}
 
-                if (m_ManipulateRightInput)
-                {
-                    var deltaRotation = GetDeltaRotation(m_MouseTranslateSpace, m_RightControllerState, inverseCameraParentRotation);
-                    m_RightControllerState.devicePosition += deltaRotation * deltaPosition;
-                }
+            //if (m_ManipulateRightInput)
+            //{
+                var deltaRotationR = GetDeltaRotation(m_MouseTranslateSpace, m_RightControllerState, inverseCameraParentRotation);
+                m_RightControllerState.devicePosition += deltaRotationR * deltaRightHand;
+            //}
 
-                if (m_ManipulateHeadInput)
-                {
-                    var deltaRotation = GetDeltaRotation(m_MouseTranslateSpace, m_HMDState, inverseCameraParentRotation);
-                    m_HMDState.centerEyePosition += deltaRotation * deltaPosition;
+            //if (m_ManipulateHeadInput)
+            //{
+                var deltaRotationH = GetDeltaRotation(m_MouseTranslateSpace, m_HMDState, inverseCameraParentRotation);
+                m_HMDState.centerEyePosition += deltaRotationH * deltaHead;
+                m_HMDState.devicePosition = m_HMDState.centerEyePosition;
+            //}
+
+            // Reset
+            if (m_ResetInput)
+            {
+                var resetScale = GetResetScale();
+
+                //if (m_ManipulateLeftInput)
+                //{
+                    var devicePositionL = Vector3.Scale(m_LeftControllerState.devicePosition, resetScale);
+                    // The active control for the InputAction will be null while the Action is in waiting at (0, 0, 0)
+                    // so use a small value to reset the position to near origin.
+                    if (devicePositionL.magnitude <= 0f)
+                        devicePositionL = new Vector3(Mathf.Epsilon, Mathf.Epsilon, Mathf.Epsilon);
+
+                    m_LeftControllerState.devicePosition = devicePositionL;
+                //}
+
+                //if (m_ManipulateRightInput)
+                //{
+                    var devicePositionR = Vector3.Scale(m_RightControllerState.devicePosition, resetScale);
+                    // The active control for the InputAction will be null while the Action is in waiting at (0, 0, 0)
+                    // so use a small value to reset the position to near origin.
+                    if (devicePositionR.magnitude <= 0f)
+                        devicePositionR = new Vector3(Mathf.Epsilon, Mathf.Epsilon, Mathf.Epsilon);
+
+                    m_RightControllerState.devicePosition = devicePositionR;
+                //}
+
+                //if (m_ManipulateHeadInput)
+                //{
+                    // TODO: Tracked Pose Driver (New Input System) has a bug where it only subscribes to
+                    // performed and not canceled, so the Transform will not be updated until the magnitude
+                    // is considered actuated to trigger a performed event. As a workaround, set to
+                    // a small value (enough to be considered actuated) instead of Vector3.zero.
+                    var centerEyePosition = Vector3.Scale(m_HMDState.centerEyePosition, resetScale);
+                    if (centerEyePosition.magnitude <= 0f)
+                        centerEyePosition = new Vector3(Mathf.Epsilon, Mathf.Epsilon, Mathf.Epsilon);
+
+                    m_HMDState.centerEyePosition = centerEyePosition;
                     m_HMDState.devicePosition = m_HMDState.centerEyePosition;
-                }
-
-                // Reset
-                if (m_ResetInput)
-                {
-                    var resetScale = GetResetScale();
-
-                    if (m_ManipulateLeftInput)
-                    {
-                        var devicePosition = Vector3.Scale(m_LeftControllerState.devicePosition, resetScale);
-                        // The active control for the InputAction will be null while the Action is in waiting at (0, 0, 0)
-                        // so use a small value to reset the position to near origin.
-                        if (devicePosition.magnitude <= 0f)
-                            devicePosition = new Vector3(Mathf.Epsilon, Mathf.Epsilon, Mathf.Epsilon);
-
-                        m_LeftControllerState.devicePosition = devicePosition;
-                    }
-
-                    if (m_ManipulateRightInput)
-                    {
-                        var devicePosition = Vector3.Scale(m_RightControllerState.devicePosition, resetScale);
-                        // The active control for the InputAction will be null while the Action is in waiting at (0, 0, 0)
-                        // so use a small value to reset the position to near origin.
-                        if (devicePosition.magnitude <= 0f)
-                            devicePosition = new Vector3(Mathf.Epsilon, Mathf.Epsilon, Mathf.Epsilon);
-
-                        m_RightControllerState.devicePosition = devicePosition;
-                    }
-
-                    if (m_ManipulateHeadInput)
-                    {
-                        // TODO: Tracked Pose Driver (New Input System) has a bug where it only subscribes to
-                        // performed and not canceled, so the Transform will not be updated until the magnitude
-                        // is considered actuated to trigger a performed event. As a workaround, set to
-                        // a small value (enough to be considered actuated) instead of Vector3.zero.
-                        var centerEyePosition = Vector3.Scale(m_HMDState.centerEyePosition, resetScale);
-                        if (centerEyePosition.magnitude <= 0f)
-                            centerEyePosition = new Vector3(Mathf.Epsilon, Mathf.Epsilon, Mathf.Epsilon);
-
-                        m_HMDState.centerEyePosition = centerEyePosition;
-                        m_HMDState.devicePosition = m_HMDState.centerEyePosition;
-                    }
-                }
+                //}
             }
+        }
             else
             {
-                // Mouse rotation
-                var scaledMouseDeltaInput =
-                    new Vector3(m_MouseDeltaInput.x * m_MouseXRotateSensitivity,
-                        m_MouseDeltaInput.y * m_MouseYRotateSensitivity * (m_MouseYRotateInvert ? 1f : -1f),
-                        m_MouseScrollInput.y * m_MouseScrollRotateSensitivity);
+            // Mouse rotation
+            var scaledManipulateLeftHandInput =
+                    new Vector3(m_ManipulateLeftHandInput.x * m_MouseXRotateSensitivity,
+                        m_ManipulateLeftHandInput.y * m_MouseYRotateSensitivity * (m_MouseYRotateInvert ? 1f : -1f),
+                        0);
 
-                Vector3 anglesDelta;
+                var scaledManipulateRightHandInput =
+                    new Vector3(m_ManipulateRightHandInput.x * m_MouseXRotateSensitivity,
+                        m_ManipulateRightHandInput.y * m_MouseYRotateSensitivity * (m_MouseYRotateInvert ? 1f : -1f),
+                        0);
+
+                var scaledManipulateHeadInput =
+                    new Vector3(m_ManipulateHeadInput.x * m_MouseXRotateSensitivity,
+                        m_ManipulateHeadInput.y * m_MouseYRotateSensitivity * (m_MouseYRotateInvert ? 1f : -1f),
+                        0);
+
+            //Debug.Log("right = " + m_ManipulateRightHandInput);
+
+            /*
+            var scaledMouseDeltaInput =
+                new Vector3(m_MouseDeltaInput.x * m_MouseXRotateSensitivity,
+                    m_MouseDeltaInput.y * m_MouseYRotateSensitivity * (m_MouseYRotateInvert ? 1f : -1f),
+                    m_MouseScrollInput.y * m_MouseScrollRotateSensitivity);
+            */
+            Vector3 anglesLeft, anglesRight, anglesHead;
                 if (m_XConstraintInput && !m_YConstraintInput && m_ZConstraintInput) // XZ
                 {
-                    anglesDelta = new Vector3(scaledMouseDeltaInput.y, 0f, -scaledMouseDeltaInput.x);
+                    anglesLeft = new Vector3(scaledManipulateLeftHandInput.y, 0f, -scaledManipulateLeftHandInput.x);
+                    anglesRight = new Vector3(scaledManipulateRightHandInput.y, 0f, -scaledManipulateRightHandInput.x);
+                    anglesHead = new Vector3(scaledManipulateHeadInput.y, 0f, -scaledManipulateHeadInput.x);
                 }
                 else if (!m_XConstraintInput && m_YConstraintInput && m_ZConstraintInput) // YZ
                 {
-                    anglesDelta = new Vector3(0f, scaledMouseDeltaInput.x, -scaledMouseDeltaInput.y);
+                    anglesLeft = new Vector3(0f, scaledManipulateLeftHandInput.x, -scaledManipulateLeftHandInput.y);
+                    anglesRight = new Vector3(0f, scaledManipulateRightHandInput.x, -scaledManipulateRightHandInput.y);
+                    anglesHead = new Vector3(0f, scaledManipulateHeadInput.x, -scaledManipulateHeadInput.y);
                 }
                 else if (m_XConstraintInput && !m_YConstraintInput && !m_ZConstraintInput) // X
                 {
-                    anglesDelta = new Vector3(-scaledMouseDeltaInput.x + scaledMouseDeltaInput.y, 0f, 0f);
+                    anglesLeft = new Vector3(-scaledManipulateLeftHandInput.x + scaledManipulateLeftHandInput.y, 0f, 0f);
+                    anglesRight = new Vector3(-scaledManipulateRightHandInput.x + scaledManipulateRightHandInput.y, 0f, 0f);
+                    anglesHead = new Vector3(-scaledManipulateHeadInput.x + scaledManipulateHeadInput.y, 0f, 0f);
                 }
                 else if (!m_XConstraintInput && m_YConstraintInput && !m_ZConstraintInput) // Y
                 {
-                    anglesDelta = new Vector3(0f, scaledMouseDeltaInput.x + -scaledMouseDeltaInput.y, 0f);
+                    anglesLeft = new Vector3(0f, scaledManipulateLeftHandInput.x + -scaledManipulateLeftHandInput.y, 0f);
+                    anglesRight = new Vector3(0f, scaledManipulateRightHandInput.x + -scaledManipulateRightHandInput.y, 0f);
+                    anglesHead = new Vector3(0f, scaledManipulateHeadInput.x + -scaledManipulateHeadInput.y, 0f);
                 }
                 else if (!m_XConstraintInput && !m_YConstraintInput && m_ZConstraintInput) // Z
                 {
-                    anglesDelta = new Vector3(0f, 0f, -scaledMouseDeltaInput.x + -scaledMouseDeltaInput.y);
+                    anglesLeft = new Vector3(0f, 0f, -scaledManipulateLeftHandInput.x + -scaledManipulateLeftHandInput.y);
+                    anglesRight = new Vector3(0f, 0f, -scaledManipulateRightHandInput.x + -scaledManipulateRightHandInput.y);
+                    anglesHead = new Vector3(0f, 0f, -scaledManipulateHeadInput.x + -scaledManipulateHeadInput.y);
                 }
                 else
                 {
-                    anglesDelta = new Vector3(scaledMouseDeltaInput.y, scaledMouseDeltaInput.x, 0f);
+                    anglesLeft = new Vector3(scaledManipulateLeftHandInput.y, scaledManipulateLeftHandInput.x, 0f);
+                    anglesRight = new Vector3(scaledManipulateRightHandInput.y, scaledManipulateRightHandInput.x, 0f);
+                    anglesHead = new Vector3(scaledManipulateHeadInput.y, scaledManipulateHeadInput.x, 0f);
                 }
-
+                
                 // Scroll contribution
-                anglesDelta += new Vector3(0f, 0f, scaledMouseDeltaInput.z);
+                //jv anglesDelta += new Vector3(0f, 0f, scaledMouseDeltaInput.z);
 
-                if (m_ManipulateLeftInput)
-                {
-                    m_LeftControllerEuler += anglesDelta;
+                //jv if (m_ManipulateLeftInput)
+                //jv {
+                    m_LeftControllerEuler += anglesLeft;
                     m_LeftControllerState.deviceRotation = Quaternion.Euler(m_LeftControllerEuler);
-                }
+                //jv }
 
-                if (m_ManipulateRightInput)
-                {
-                    m_RightControllerEuler += anglesDelta;
+                //jv if (m_ManipulateRightInput)
+                //jv {
+                    m_RightControllerEuler += anglesRight;
                     m_RightControllerState.deviceRotation = Quaternion.Euler(m_RightControllerEuler);
-                }
+                //jv }
 
-                if (m_ManipulateHeadInput)
-                {
-                    m_CenterEyeEuler += anglesDelta;
+                //jv if (m_ManipulateHeadInput)
+                //jv {
+                    m_CenterEyeEuler += anglesHead;
                     m_HMDState.centerEyeRotation = Quaternion.Euler(m_CenterEyeEuler);
-                }
+                //jv }
 
-                // Reset
-                if (m_ResetInput)
+            // Reset
+    
+            if (m_ResetInput)
                 {
+                Debug.Log("Reset!");
                     var resetScale = GetResetScale();
 
-                    if (m_ManipulateLeftInput)
-                    {
+                    //jv if (m_ManipulateLeftInput)
+                    //jv {
                         m_LeftControllerEuler = Vector3.Scale(m_LeftControllerEuler, resetScale);
                         m_LeftControllerState.deviceRotation = Quaternion.Euler(m_LeftControllerEuler);
-                    }
+                    //jv }
 
-                    if (m_ManipulateRightInput)
-                    {
+                    //jv if (m_ManipulateRightInput)
+                    //jv {
                         m_RightControllerEuler = Vector3.Scale(m_RightControllerEuler, resetScale);
                         m_RightControllerState.deviceRotation = Quaternion.Euler(m_RightControllerEuler);
-                    }
+                    //jv }
 
-                    if (m_ManipulateHeadInput)
-                    {
+                    //jv if (m_ManipulateHeadInput)
+                    //jv {
                         m_CenterEyeEuler = Vector3.Scale(m_CenterEyeEuler, resetScale);
                         m_HMDState.centerEyeRotation = Quaternion.Euler(m_CenterEyeEuler);
-                    }
+                    //jv }
                 }
-            }
+
+             }
+            //Debug.Log("left = " + m_LeftControllerEuler);
+                
         }
 
         /// <summary>
@@ -1466,17 +1611,23 @@ namespace UnityEngine.XR.Interaction.Toolkit.Inputs.Simulation
         {
             ProcessAxis2DControlInput();
 
-            if (m_ManipulateLeftInput)
-            {
-                ProcessButtonControlInput(ref m_LeftControllerState);
-            }
+            //jv if (m_ManipulateLeftInput)
+            //jv {
+            ProcessLeftButtonControlInput(ref m_LeftControllerState);
+            //jv }
 
-            if (m_ManipulateRightInput)
-            {
-                ProcessButtonControlInput(ref m_RightControllerState);
-            }
+            //jv if (m_ManipulateRightInput)
+            //jv {
+            ProcessRightButtonControlInput(ref m_RightControllerState);
+            //jv }
         }
 
+
+
+
+        protected virtual void ProcessAxis2DControlInput() { return; }
+
+        /* jv not sure what this does yet
         /// <summary>
         /// Process input from the user and update the state of manipulated controller device(s)
         /// related to 2D Axis input controls.
@@ -1540,13 +1691,15 @@ namespace UnityEngine.XR.Interaction.Toolkit.Inputs.Simulation
                 }
             }
         }
+        */
+
 
         /// <summary>
         /// Process input from the user and update the state of manipulated controller device(s)
         /// related to button input controls.
         /// </summary>
         /// <param name="controllerState">The controller state that will be processed.</param>
-        protected virtual void ProcessButtonControlInput(ref XRSimulatedControllerState controllerState)
+        protected virtual void ProcessLeftButtonControlInput(ref XRSimulatedControllerState controllerState)
         {
             controllerState.grip = m_GripInput ? 1f : 0f;
             controllerState.WithButton(ControllerButton.GripButton, m_GripInput);
@@ -1562,6 +1715,29 @@ namespace UnityEngine.XR.Interaction.Toolkit.Inputs.Simulation
             controllerState.WithButton(ControllerButton.PrimaryTouch, m_PrimaryTouchInput);
             controllerState.WithButton(ControllerButton.SecondaryTouch, m_SecondaryTouchInput);
         }
+
+        /// <summary>
+        /// Process input from the user and update the state of manipulated controller device(s)
+        /// related to button input controls.
+        /// </summary>
+        /// <param name="controllerState">The controller state that will be processed.</param>
+        protected virtual void ProcessRightButtonControlInput(ref XRSimulatedControllerState controllerState)
+        {
+            controllerState.grip = m_GripInput ? 1f : 0f;
+            controllerState.WithButton(ControllerButton.GripButton, m_GripInput);
+            controllerState.trigger = m_TriggerInput ? 1f : 0f;
+            controllerState.WithButton(ControllerButton.TriggerButton, m_TriggerInput);
+            controllerState.WithButton(ControllerButton.PrimaryButton, m_PrimaryButtonInput);
+            controllerState.WithButton(ControllerButton.SecondaryButton, m_SecondaryButtonInput);
+            controllerState.WithButton(ControllerButton.MenuButton, m_MenuInput);
+            controllerState.WithButton(ControllerButton.Primary2DAxisClick, m_Primary2DAxisClickInput);
+            controllerState.WithButton(ControllerButton.Secondary2DAxisClick, m_Secondary2DAxisClickInput);
+            controllerState.WithButton(ControllerButton.Primary2DAxisTouch, m_Primary2DAxisTouchInput);
+            controllerState.WithButton(ControllerButton.Secondary2DAxisTouch, m_Secondary2DAxisTouchInput);
+            controllerState.WithButton(ControllerButton.PrimaryTouch, m_PrimaryTouchInput);
+            controllerState.WithButton(ControllerButton.SecondaryTouch, m_SecondaryTouchInput);
+        }
+
 
         /// <summary>
         /// Add simulated XR devices to the Input System.
@@ -1766,6 +1942,7 @@ namespace UnityEngine.XR.Interaction.Toolkit.Inputs.Simulation
         void SubscribeKeyboardZTranslateAction() => Subscribe(m_KeyboardZTranslateAction, OnKeyboardZTranslatePerformed, OnKeyboardZTranslateCanceled);
         void UnsubscribeKeyboardZTranslateAction() => Unsubscribe(m_KeyboardZTranslateAction, OnKeyboardZTranslatePerformed, OnKeyboardZTranslateCanceled);
 
+        /* jv
         void SubscribeManipulateLeftAction() => Subscribe(m_ManipulateLeftAction, OnManipulateLeftPerformed, OnManipulateLeftCanceled);
         void UnsubscribeManipulateLeftAction() => Unsubscribe(m_ManipulateLeftAction, OnManipulateLeftPerformed, OnManipulateLeftCanceled);
 
@@ -1780,6 +1957,16 @@ namespace UnityEngine.XR.Interaction.Toolkit.Inputs.Simulation
 
         void SubscribeManipulateHeadAction() => Subscribe(m_ManipulateHeadAction, OnManipulateHeadPerformed, OnManipulateHeadCanceled);
         void UnsubscribeManipulateHeadAction() => Unsubscribe(m_ManipulateHeadAction, OnManipulateHeadPerformed, OnManipulateHeadCanceled);
+        */
+        void SubscribeManipulateLeftHandAction() => Subscribe(m_ManipulateLeftHandAction, OnManipulateLeftHandPerformed, OnManipulateLeftHandCanceled);
+        void UnsubscribeManipulateLeftHandAction() => Unsubscribe(m_ManipulateLeftHandAction, OnManipulateLeftHandPerformed, OnManipulateLeftHandCanceled);
+
+        void SubscribeManipulateRightHandAction() => Subscribe(m_ManipulateRightHandAction, OnManipulateRightHandPerformed, OnManipulateRightHandCanceled);
+        void UnsubscribeManipulateRightHandAction() => Unsubscribe(m_ManipulateRightHandAction, OnManipulateRightHandPerformed, OnManipulateRightHandCanceled);
+
+        void SubscribeManipulateHeadAction() => Subscribe(m_ManipulateHeadAction, OnManipulateHeadPerformed, OnManipulateHeadCanceled);
+        void UnsubscribeManipulateHeadAction() => Unsubscribe(m_ManipulateHeadAction, OnManipulateHeadPerformed, OnManipulateHeadCanceled);
+
 
         void SubscribeMouseDeltaAction() => Subscribe(m_MouseDeltaAction, OnMouseDeltaPerformed, OnMouseDeltaCanceled);
         void UnsubscribeMouseDeltaAction() => Unsubscribe(m_MouseDeltaAction, OnMouseDeltaPerformed, OnMouseDeltaCanceled);
@@ -1820,8 +2007,8 @@ namespace UnityEngine.XR.Interaction.Toolkit.Inputs.Simulation
         void SubscribeToggleSecondary2DAxisTargetAction() => Subscribe(m_ToggleSecondary2DAxisTargetAction, OnToggleSecondary2DAxisTargetPerformed);
         void UnsubscribeToggleSecondary2DAxisTargetAction() => Unsubscribe(m_ToggleSecondary2DAxisTargetAction, OnToggleSecondary2DAxisTargetPerformed);
 
-        void SubscribeAxis2DAction() => Subscribe(m_Axis2DAction, OnAxis2DPerformed, OnAxis2DCanceled);
-        void UnsubscribeAxis2DAction() => Unsubscribe(m_Axis2DAction, OnAxis2DPerformed, OnAxis2DCanceled);
+        //jv void SubscribeAxis2DAction() => Subscribe(m_Axis2DAction, OnAxis2DPerformed, OnAxis2DCanceled);
+        //jv void UnsubscribeAxis2DAction() => Unsubscribe(m_Axis2DAction, OnAxis2DPerformed, OnAxis2DCanceled);
 
         void SubscribeRestingHandAxis2DAction() => Subscribe(m_RestingHandAxis2DAction, OnRestingHandAxis2DPerformed, OnRestingHandAxis2DCanceled);
         void UnsubscribeRestingHandAxis2DAction() => Unsubscribe(m_RestingHandAxis2DAction, OnRestingHandAxis2DPerformed, OnRestingHandAxis2DCanceled);
@@ -1868,19 +2055,37 @@ namespace UnityEngine.XR.Interaction.Toolkit.Inputs.Simulation
         void OnKeyboardZTranslatePerformed(InputAction.CallbackContext context) => m_KeyboardZTranslateInput = context.ReadValue<float>();
         void OnKeyboardZTranslateCanceled(InputAction.CallbackContext context) => m_KeyboardZTranslateInput = 0f;
 
-        void OnManipulateLeftPerformed(InputAction.CallbackContext context) => m_ManipulateLeftInput = true;
-        void OnManipulateLeftCanceled(InputAction.CallbackContext context) => m_ManipulateLeftInput = false;
+        //jv void OnManipulateLeftPerformed(InputAction.CallbackContext context) => m_ManipulateLeftInput = true;
+        //jv void OnManipulateLeftCanceled(InputAction.CallbackContext context) => m_ManipulateLeftInput = false;
 
-        void OnManipulateRightPerformed(InputAction.CallbackContext context) => m_ManipulateRightInput = true;
-        void OnManipulateRightCanceled(InputAction.CallbackContext context) => m_ManipulateRightInput = false;
+        //jv void OnManipulateRightPerformed(InputAction.CallbackContext context) => m_ManipulateRightInput = true;
+        //jv void OnManipulateRightCanceled(InputAction.CallbackContext context) => m_ManipulateRightInput = false;
 
-        void OnToggleManipulateLeftPerformed(InputAction.CallbackContext context) => m_ManipulateLeftInput = !m_ManipulateLeftInput;
-        void OnToggleManipulateRightPerformed(InputAction.CallbackContext context) => m_ManipulateRightInput = !m_ManipulateRightInput;
+        //jv void OnToggleManipulateLeftPerformed(InputAction.CallbackContext context) => m_ManipulateLeftInput = !m_ManipulateLeftInput;
+        //jv void OnToggleManipulateRightPerformed(InputAction.CallbackContext context) => m_ManipulateRightInput = !m_ManipulateRightInput;
 
-        void OnManipulateHeadPerformed(InputAction.CallbackContext context) => m_ManipulateHeadInput = true;
-        void OnManipulateHeadCanceled(InputAction.CallbackContext context) => m_ManipulateHeadInput = false;
+        //jv void OnManipulateHeadPerformed(InputAction.CallbackContext context) => m_ManipulateHeadInput = true;
+        //jv void OnManipulateHeadCanceled(InputAction.CallbackContext context) => m_ManipulateHeadInput = false;
 
-        void OnMouseDeltaPerformed(InputAction.CallbackContext context) => m_MouseDeltaInput = context.ReadValue<Vector2>();
+        void OnManipulateLeftHandPerformed(InputAction.CallbackContext context) { m_ManipulateLeftHandInput = 10*context.ReadValue<Vector2>();
+            //Debug.Log("raw left=" + m_ManipulateLeftHandInput);
+        }
+        void OnManipulateLeftHandCanceled(InputAction.CallbackContext context) => m_ManipulateLeftHandInput = Vector2.zero;
+
+        void OnManipulateRightHandPerformed(InputAction.CallbackContext context) { m_ManipulateRightHandInput = 10*context.ReadValue<Vector2>();
+            //Debug.Log("raw right=" + m_ManipulateRightHandInput);
+        }
+        void OnManipulateRightHandCanceled(InputAction.CallbackContext context) => m_ManipulateRightHandInput = Vector2.zero;
+
+        void OnManipulateHeadPerformed(InputAction.CallbackContext context) { m_ManipulateHeadInput = 2*context.ReadValue<Vector2>();
+            //Debug.Log("raw head=" + m_ManipulateHeadInput);
+
+        }
+        void OnManipulateHeadCanceled(InputAction.CallbackContext context) => m_ManipulateHeadInput = Vector2.zero;
+
+        void OnMouseDeltaPerformed(InputAction.CallbackContext context) { m_MouseDeltaInput = context.ReadValue<Vector2>();
+            //Debug.Log("raw mouse=" + context );
+        }
         void OnMouseDeltaCanceled(InputAction.CallbackContext context) => m_MouseDeltaInput = Vector2.zero;
 
         void OnMouseScrollPerformed(InputAction.CallbackContext context) => m_MouseScrollInput = context.ReadValue<Vector2>();
