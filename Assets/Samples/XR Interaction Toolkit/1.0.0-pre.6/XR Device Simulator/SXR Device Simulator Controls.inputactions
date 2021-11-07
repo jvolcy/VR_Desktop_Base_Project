@@ -307,6 +307,17 @@
                 },
                 {
                     "name": "",
+                    "id": "dd931e1c-575a-4e3f-ab5d-847e7c9e835c",
+                    "path": "<XInputController>/leftStick",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Mouse Delta",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
                     "id": "66e536bc-b5b6-4c7b-903a-fbcc05fc854e",
                     "path": "<Mouse>/scroll",
                     "interactions": "",
@@ -605,6 +616,17 @@
                     "action": "Axis 2D",
                     "isComposite": false,
                     "isPartOfComposite": true
+                },
+                {
+                    "name": "",
+                    "id": "e1a43e9b-e5d9-49a0-bb6a-5a7e5add4663",
+                    "path": "<XInputController>/rightStick",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Axis 2D",
+                    "isComposite": false,
+                    "isPartOfComposite": false
                 },
                 {
                     "name": "",
