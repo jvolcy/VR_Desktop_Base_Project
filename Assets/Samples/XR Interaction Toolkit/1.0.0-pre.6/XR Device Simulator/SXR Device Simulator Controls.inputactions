@@ -247,17 +247,6 @@
                 },
                 {
                     "name": "",
-                    "id": "dd931e1c-575a-4e3f-ab5d-847e7c9e835c",
-                    "path": "<XInputController>/leftStick",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "",
-                    "action": "Mouse Delta",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
                     "id": "66e536bc-b5b6-4c7b-903a-fbcc05fc854e",
                     "path": "<Mouse>/scroll",
                     "interactions": "",
@@ -358,7 +347,7 @@
                 {
                     "name": "",
                     "id": "eb85be45-d615-4877-a299-e95f8b01daea",
-                    "path": "<Gamepad>/rightStick",
+                    "path": "<XInputController>/rightStick",
                     "interactions": "",
                     "processors": "",
                     "groups": "",

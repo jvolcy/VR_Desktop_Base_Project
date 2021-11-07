@@ -5,6 +5,25 @@ using UnityEngine.InputSystem.Controls;
 using UnityEngine.InputSystem.LowLevel;
 using UnityEngine.InputSystem.XR;
 
+/*
+ * This is an XBox Controller-based simulator for the Oculus Quest 2 headset.  This code is
+ * built from the base code provided with the 1.0.0-pre 6 XR Simulation Toolkit.
+ * 
+ * SpelmanXR, 2021
+ * 
+ * Notes
+ * =====
+ * 
+ * XRSimulation Classes Documentation:
+ * https://docs.unity3d.com/Packages/com.unity.xr.interaction.toolkit@0.10/api/UnityEngine.XR.Interaction.Toolkit.Inputs.Simulation.html
+ * 
+ * InputSystem.XR Class Documentation:
+ * https://docs.unity3d.com/Packages/com.unity.inputsystem@1.0/api/UnityEngine.InputSystem.XR.html
+ * 
+ * 
+ * 
+ */
+
 namespace UnityEngine.XR.Interaction.Toolkit.Inputs.Simulation
 {
     /// <summary>
@@ -1066,7 +1085,7 @@ namespace UnityEngine.XR.Interaction.Toolkit.Inputs.Simulation
         /// <summary>
         /// The transformation mode in which the mouse should operate.
         /// </summary>
-        public TransformationMode mouseTransformationMode { get; set; } = TransformationMode.Translate;
+        public TransformationMode mouseTransformationMode { get; set; } = TransformationMode.Rotate;
 
         /// <summary>
         /// One or more 2D Axis controls that keyboard input should apply to (or none).
@@ -1147,6 +1166,11 @@ namespace UnityEngine.XR.Interaction.Toolkit.Inputs.Simulation
             m_HMDState.Reset();
             m_LeftControllerState.Reset();
             m_RightControllerState.Reset();
+
+            m_LeftControllerState.devicePosition += new Vector3(-0.1f, 0f, 0f);
+            m_RightControllerState.devicePosition += new Vector3(0.1f, 0f, 0f);
+
+            XRSimulatedController.s = 3;
         }
 
 
@@ -1624,27 +1648,24 @@ namespace UnityEngine.XR.Interaction.Toolkit.Inputs.Simulation
 
 
 
-
-        protected virtual void ProcessAxis2DControlInput() { return; }
-
-        /* jv not sure what this does yet
         /// <summary>
         /// Process input from the user and update the state of manipulated controller device(s)
         /// related to 2D Axis input controls.
         /// </summary>
         protected virtual void ProcessAxis2DControlInput()
         {
-            if (!m_ManipulateLeftInput && !m_ManipulateRightInput)
-                return;
+            //if (!m_ManipulateLeftInput && !m_ManipulateRightInput)
+            //    return;
 
-            if ((axis2DTargets & Axis2DTargets.Primary2DAxis) != 0)
-            {
-                if (m_ManipulateLeftInput)
-                    m_LeftControllerState.primary2DAxis = m_Axis2DInput;
+            // if ((axis2DTargets & Axis2DTargets.Primary2DAxis) != 0)
+            // {
+            //if (m_ManipulateLeftInput)
+                m_LeftControllerState.primary2DAxis = m_ManipulateLeftHandInput; // m_Axis2DInput;
 
-                if (m_ManipulateRightInput)
-                    m_RightControllerState.primary2DAxis = m_Axis2DInput;
+            //if (m_ManipulateRightInput)
+            m_RightControllerState.primary2DAxis = m_ManipulateRightHandInput; // m_Axis2DInput;
 
+            /*  Really don't know what this does
                 if (m_ManipulateLeftInput ^ m_ManipulateRightInput)
                 {
                     if (m_RestingHandAxis2DInput != Vector2.zero || m_ManipulatedRestingHandAxis2D)
@@ -1662,8 +1683,11 @@ namespace UnityEngine.XR.Interaction.Toolkit.Inputs.Simulation
                         m_ManipulatedRestingHandAxis2D = false;
                     }
                 }
-            }
+            */
+           // }
 
+            /* don't know what this is.  Secondary axis??
+             * 
             if ((axis2DTargets & Axis2DTargets.Secondary2DAxis) != 0)
             {
                 if (m_ManipulateLeftInput)
@@ -1690,8 +1714,9 @@ namespace UnityEngine.XR.Interaction.Toolkit.Inputs.Simulation
                     }
                 }
             }
+            */
         }
-        */
+       
 
 
         /// <summary>
