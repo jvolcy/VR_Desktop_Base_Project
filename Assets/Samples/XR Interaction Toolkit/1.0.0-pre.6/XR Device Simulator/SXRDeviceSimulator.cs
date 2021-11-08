@@ -20,7 +20,11 @@ using UnityEngine.InputSystem.XR;
  * InputSystem.XR Class Documentation:
  * https://docs.unity3d.com/Packages/com.unity.inputsystem@1.0/api/UnityEngine.InputSystem.XR.html
  * 
+ * Oculus Controls Input Mapping:
+ * https://developer.oculus.com/documentation/unreal/unreal-controller-input-mapping-reference/
  * 
+ * Oculus App Development in Unity
+ * https://developer.oculus.com/documentation/unity/
  * 
  */
 
@@ -53,7 +57,7 @@ namespace UnityEngine.XR.Interaction.Toolkit.Inputs.Simulation
     /// <seealso cref="SimulatedInputLayoutLoader"/>
     [DefaultExecutionOrder(XRInteractionUpdateOrder.k_DeviceSimulator)]
     [HelpURL(XRHelpURLConstants.k_XRDeviceSimulator)]
-    public class SXRDeviceSimulator : MonoBehaviour
+    public partial class SXRDeviceSimulator : MonoBehaviour
     {
         /// <summary>
         /// The coordinate space in which to operate.
@@ -99,779 +103,41 @@ namespace UnityEngine.XR.Interaction.Toolkit.Inputs.Simulation
             Rotate,
         }
 
-        /// <summary>
-        /// The target device control(s) to update from input.
-        /// </summary>
-        /// <remarks>
-        /// <see cref="FlagsAttribute"/> to support updating multiple controls from input
-        /// (e.g. to drive the primary and secondary 2D axis on a controller from the same input).
-        /// </remarks>
-        /// <seealso cref="axis2DTargets"/>
-        [Flags]
-        public enum Axis2DTargets
-        {
-            /// <summary>
-            /// Do not update device state from input.
-            /// </summary>
-            None = 0,
 
-            /// <summary>
-            /// Update device position from input.
-            /// </summary>
-            Position  = 1 << 0,
-
-            /// <summary>
-            /// Update the primary touchpad or joystick on a controller device from input.
-            /// </summary>
-            Primary2DAxis   = 1 << 1,
-
-            /// <summary>
-            /// Update the secondary touchpad or joystick on a controller device from input.
-            /// </summary>
-            Secondary2DAxis = 1 << 2,
-        }
-
+        /*
         [SerializeField]
-        [Tooltip("The Input System Action used to translate in the x-axis (left/right) while held. Must be a Value Axis Control.")]
-        InputActionReference m_KeyboardXTranslateAction;
-        /// <summary>
-        /// The Input System Action used to translate in the x-axis (left/right) while held.
-        /// Must be a <see cref="InputActionType.Value"/> <see cref="AxisControl"/>.
-        /// </summary>
-        public InputActionReference keyboardXTranslateAction
+        [Tooltip("tool_tip_description")]
+        InputActionReference m_XXX;
+        public InputActionReference XXX
         {
-            get => m_KeyboardXTranslateAction;
+            get => m_XXX;
             set
             {
-                UnsubscribeKeyboardXTranslateAction();
-                m_KeyboardXTranslateAction = value;
-                SubscribeKeyboardXTranslateAction();
-            }
-        }
-
-        [SerializeField]
-        [Tooltip("The Input System Action used to translate in the y-axis (up/down) while held. Must be a Value Axis Control.")]
-        InputActionReference m_KeyboardYTranslateAction;
-        /// <summary>
-        /// The Input System Action used to translate in the y-axis (up/down) while held.
-        /// Must be a <see cref="InputActionType.Value"/> <see cref="AxisControl"/>.
-        /// </summary>
-        public InputActionReference keyboardYTranslateAction
-        {
-            get => m_KeyboardYTranslateAction;
-            set
-            {
-                UnsubscribeKeyboardYTranslateAction();
-                m_KeyboardYTranslateAction = value;
-                SubscribeKeyboardYTranslateAction();
-            }
-        }
-
-        [SerializeField]
-        [Tooltip("The Input System Action used to translate in the z-axis (forward/back) while held. Must be a Value Axis Control.")]
-        InputActionReference m_KeyboardZTranslateAction;
-        /// <summary>
-        /// The Input System Action used to translate in the z-axis (forward/back) while held.
-        /// Must be a <see cref="InputActionType.Value"/> <see cref="AxisControl"/>.
-        /// </summary>
-        public InputActionReference keyboardZTranslateAction
-        {
-            get => m_KeyboardZTranslateAction;
-            set
-            {
-                UnsubscribeKeyboardZTranslateAction();
-                m_KeyboardZTranslateAction = value;
-                SubscribeKeyboardZTranslateAction();
-            }
-        }
-
-        /* jv
-        [SerializeField]
-        [Tooltip("The Input System Action used to enable manipulation of the left-hand controller while held. Must be a Button Control.")]
-        InputActionReference m_ManipulateLeftAction;
-        /// <summary>
-        /// The Input System Action used to enable manipulation of the left-hand controller while held.
-        /// Must be a <see cref="ButtonControl"/>.
-        /// </summary>
-        /// <remarks>
-        /// Note that if controls on the left-hand controller are actuated when this action is released,
-        /// those controls will continue to remain actuated. This is to allow for multi-hand interactions
-        /// without needing to have dedicated bindings for manipulating each controller separately and concurrently.
-        /// </remarks>
-        /// <seealso cref="manipulateRightAction"/>
-        /// <seealso cref="toggleManipulateLeftAction"/>
-        public InputActionReference manipulateLeftAction
-        {
-            get => m_ManipulateLeftAction;
-            set
-            {
-                UnsubscribeManipulateLeftAction();
-                m_ManipulateLeftAction = value;
-                SubscribeManipulateLeftAction();
-            }
-        }
-
-        [SerializeField]
-        [Tooltip("The Input System Action used to enable manipulation of the right-hand controller while held. Must be a Button Control.")]
-        InputActionReference m_ManipulateRightAction;
-        /// <summary>
-        /// The Input System Action used to enable manipulation of the right-hand controller while held.
-        /// Must be a <see cref="ButtonControl"/>.
-        /// </summary>
-        /// <remarks>
-        /// Note that if controls on the right-hand controller are actuated when this action is released,
-        /// those controls will continue to remain actuated. This is to allow for multi-hand interactions
-        /// without needing to have dedicated bindings for manipulating each controller separately and concurrently.
-        /// </remarks>
-        /// <seealso cref="manipulateLeftAction"/>
-        public InputActionReference manipulateRightAction
-        {
-            get => m_ManipulateRightAction;
-            set
-            {
-                UnsubscribeManipulateRightAction();
-                m_ManipulateRightAction = value;
-                SubscribeManipulateRightAction();
-            }
-        }
-
-        [SerializeField]
-        [Tooltip("The Input System Action used to toggle enable manipulation of the left-hand controller when pressed. Must be a Button Control.")]
-        InputActionReference m_ToggleManipulateLeftAction;
-        /// <summary>
-        /// The Input System Action used to toggle enable manipulation of the left-hand controller when pressed.
-        /// Must be a <see cref="ButtonControl"/>.
-        /// </summary>
-        /// <seealso cref="manipulateLeftAction"/>
-        /// <seealso cref="toggleManipulateRightAction"/>
-        public InputActionReference toggleManipulateLeftAction
-        {
-            get => m_ToggleManipulateLeftAction;
-            set
-            {
-                UnsubscribeToggleManipulateLeftAction();
-                m_ToggleManipulateLeftAction = value;
-                SubscribeToggleManipulateLeftAction();
-            }
-        }
-
-        
-        [SerializeField]
-        [Tooltip("The Input System Action used to toggle enable manipulation of the right-hand controller when pressed. Must be a Button Control.")]
-        InputActionReference m_ToggleManipulateRightAction;
-        /// <summary>
-        /// The Input System Action used to toggle enable manipulation of the right-hand controller when pressed.
-        /// Must be a <see cref="ButtonControl"/>.
-        /// </summary>
-        /// <seealso cref="manipulateRightAction"/>
-        /// <seealso cref="toggleManipulateLeftAction"/>
-        public InputActionReference toggleManipulateRightAction
-        {
-            get => m_ToggleManipulateRightAction;
-            set
-            {
-                UnsubscribeToggleManipulateRightAction();
-                m_ToggleManipulateRightAction = value;
-                SubscribeToggleManipulateRightAction();
-            }
-        }
-       
-
-        [SerializeField]
-        [Tooltip("The Input System Action used to enable manipulation of the HMD while held. Must be a Button Control.")]
-        InputActionReference m_ManipulateHeadAction;
-        /// <summary>
-        /// The Input System Action used to enable manipulation of the HMD while held.
-        /// Must be a <see cref="ButtonControl"/>.
-        /// </summary>
-        public InputActionReference manipulateHeadAction
-        {
-            get => m_ManipulateHeadAction;
-            set
-            {
-                UnsubscribeManipulateHeadAction();
-                m_ManipulateHeadAction = value;
-                SubscribeManipulateHeadAction();
+                UnsubscribeXXX();
+                m_XXX = value;
+                SubscribeXXX();
             }
         }
         */
 
-        [SerializeField]
-        [Tooltip("The Input System Action used to translate or rotate the left hand by a scaled amount along or about the x- and y-axes. Must be a Value Vector2 Control.")]
-        InputActionReference m_ManipulateLeftHandAction;
-        public InputActionReference manipulateLeftHandAction
-        {
-            get => m_ManipulateLeftHandAction;
-            set
-            {
-                UnsubscribeManipulateLeftHandAction();
-                m_ManipulateLeftHandAction = value;
-                Debug.Log("L" + value);
-                SubscribeManipulateLeftHandAction();
-            }
-        }
-
-        [SerializeField]
-        [Tooltip("The Input System Action used to translate or rotate the right hand by a scaled amount along or about the x- and y-axes. Must be a Value Vector2 Control.")]
-        InputActionReference m_ManipulateRightHandAction;
-        public InputActionReference manipulateRightHandAction
-        {
-            get => m_ManipulateRightHandAction;
-            set
-            {
-                UnsubscribeManipulateRightHandAction();
-                m_ManipulateRightHandAction = value;
-                Debug.Log("R" + value);
-                SubscribeManipulateRightHandAction();
-            }
-        }
-
-        [SerializeField]
-        [Tooltip("The Input System Action used to translate or rotate the head by a scaled amount along or about the x- and y-axes. Must be a Value Vector2 Control.")]
-        InputActionReference m_ManipulateHeadAction;
-        public InputActionReference manipulateHeadAction
-        {
-            get => m_ManipulateHeadAction;
-            set
-            {
-                UnsubscribeManipulateHeadAction();
-                m_ManipulateHeadAction = value;
-                Debug.Log("H" + value);
-                SubscribeManipulateHeadAction();
-            }
-        }
-
-        [SerializeField]
-        [Tooltip("The Input System Action used to translate or rotate by a scaled amount along or about the x- and y-axes. Must be a Value Vector2 Control.")]
-        InputActionReference m_MouseDeltaAction;
-        /// <summary>
-        /// The Input System Action used to translate or rotate by a scaled amount along or about the x- and y-axes.
-        /// Must be a <see cref="InputActionType.Value"/> <see cref="Vector2Control"/>.
-        /// </summary>
-        /// <remarks>
-        /// Typically bound to the screen-space motion delta of the mouse in pixels.
-        /// </remarks>
-        /// <seealso cref="mouseScrollAction"/>
-        public InputActionReference mouseDeltaAction
-        {
-            get => m_MouseDeltaAction;
-            set
-            {
-                UnsubscribeMouseDeltaAction();
-                m_MouseDeltaAction = value;
-                Debug.Log("M" + value);
-                SubscribeMouseDeltaAction();
-            }
-        }
-
-        [SerializeField]
-        [Tooltip("The Input System Action used to translate or rotate by a scaled amount along or about the z-axis. Must be a Value Vector2 Control.")]
-        InputActionReference m_MouseScrollAction;
-        /// <summary>
-        /// The Input System Action used to translate or rotate by a scaled amount along or about the z-axis.
-        /// Must be a <see cref="InputActionType.Value"/> <see cref="Vector2Control"/>.
-        /// </summary>
-        /// <remarks>
-        /// Typically bound to the horizontal and vertical scroll wheels, though only the vertical is used.
-        /// </remarks>
-        /// <seealso cref="mouseDeltaAction"/>
-        public InputActionReference mouseScrollAction
-        {
-            get => m_MouseScrollAction;
-            set
-            {
-                UnsubscribeMouseScrollAction();
-                m_MouseScrollAction = value;
-                SubscribeMouseScrollAction();
-            }
-        }
-
-        [SerializeField]
-        [Tooltip("The Input System Action used to cause the manipulated device(s) to rotate when moving the mouse when held. Must be a Button Control.")]
-        InputActionReference m_RotateModeOverrideAction;
-        /// <summary>
-        /// The Input System Action used to cause the manipulated device(s) to rotate when moving the mouse when held.
-        /// Must be a <see cref="ButtonControl"/>.
-        /// </summary>
-        /// <remarks>
-        /// Forces rotation mode when held, no matter what the current mouse transformation mode is.
-        /// </remarks>
-        /// <seealso cref="negateModeAction"/>
-        public InputActionReference rotateModeOverrideAction
-        {
-            get => m_RotateModeOverrideAction;
-            set
-            {
-                UnsubscribeRotateModeOverrideAction();
-                m_RotateModeOverrideAction = value;
-                SubscribeRotateModeOverrideAction();
-            }
-        }
-
-        [SerializeField]
-        [Tooltip("The Input System Action used to toggle between translating or rotating the manipulated device(s) when moving the mouse when pressed. Must be a Button Control.")]
-        InputActionReference m_ToggleMouseTransformationModeAction;
-        /// <summary>
-        /// The Input System Action used to toggle between translating or rotating the manipulated device(s)
-        /// when moving the mouse when pressed.
-        /// Must be a <see cref="ButtonControl"/>.
-        /// </summary>
-        public InputActionReference toggleMouseTransformationModeAction
-        {
-            get => m_ToggleMouseTransformationModeAction;
-            set
-            {
-                UnsubscribeToggleMouseTransformationModeAction();
-                m_ToggleMouseTransformationModeAction = value;
-                SubscribeToggleMouseTransformationModeAction();
-            }
-        }
-
-        [SerializeField]
-        [Tooltip("The Input System Action used to cause the manipulated device(s) to rotate when moving the mouse while held when it would normally translate, and vice-versa. Must be a Button Control.")]
-        InputActionReference m_NegateModeAction;
-        /// <summary>
-        /// The Input System Action used to cause the manipulated device(s) to rotate when moving the mouse
-        /// while held when it would normally translate, and vice-versa.
-        /// Must be a <see cref="ButtonControl"/>.
-        /// </summary>
-        /// <remarks>
-        /// Can be used to temporarily change the mouse transformation mode to the other mode while held
-        /// for making quick adjustments.
-        /// </remarks>
-        /// <seealso cref="toggleMouseTransformationModeAction"/>
-        public InputActionReference negateModeAction
-        {
-            get => m_NegateModeAction;
-            set
-            {
-                UnsubscribeNegateModeAction();
-                m_NegateModeAction = value;
-                SubscribeNegateModeAction();
-            }
-        }
-
-        [SerializeField]
-        [Tooltip("The Input System Action used to constrain the translation or rotation to the x-axis when moving the mouse or resetting. May be combined with another axis constraint to constrain to a plane. Must be a Button Control.")]
-        InputActionReference m_XConstraintAction;
-        /// <summary>
-        /// The Input System Action used to constrain the translation or rotation to the x-axis when moving the mouse or resetting.
-        /// May be combined with another axis constraint to constrain to a plane.
-        /// Must be a <see cref="ButtonControl"/>.
-        /// </summary>
-        /// <seealso cref="yConstraintAction"/>
-        /// <seealso cref="zConstraintAction"/>
-        public InputActionReference xConstraintAction
-        {
-            get => m_XConstraintAction;
-            set
-            {
-                UnsubscribeXConstraintAction();
-                m_XConstraintAction = value;
-                SubscribeXConstraintAction();
-            }
-        }
-
-        [SerializeField]
-        [Tooltip("The Input System Action used to constrain the translation or rotation to the y-axis when moving the mouse or resetting. May be combined with another axis constraint to constrain to a plane. Must be a Button Control.")]
-        InputActionReference m_YConstraintAction;
-        /// <summary>
-        /// The Input System Action used to constrain the translation or rotation to the y-axis when moving the mouse or resetting.
-        /// May be combined with another axis constraint to constrain to a plane.
-        /// Must be a <see cref="ButtonControl"/>.
-        /// </summary>
-        /// <seealso cref="xConstraintAction"/>
-        /// <seealso cref="zConstraintAction"/>
-        public InputActionReference yConstraintAction
-        {
-            get => m_YConstraintAction;
-            set
-            {
-                UnsubscribeYConstraintAction();
-                m_YConstraintAction = value;
-                SubscribeYConstraintAction();
-            }
-        }
-
-        [SerializeField]
-        [Tooltip("The Input System Action used to constrain the translation or rotation to the z-axis when moving the mouse or resetting. May be combined with another axis constraint to constrain to a plane. Must be a Button Control.")]
-        InputActionReference m_ZConstraintAction;
-        /// <summary>
-        /// The Input System Action used to constrain the translation or rotation to the z-axis when moving the mouse or resetting.
-        /// May be combined with another axis constraint to constrain to a plane.
-        /// Must be a <see cref="ButtonControl"/>.
-        /// </summary>
-        /// <seealso cref="xConstraintAction"/>
-        /// <seealso cref="yConstraintAction"/>
-        public InputActionReference zConstraintAction
-        {
-            get => m_ZConstraintAction;
-            set
-            {
-                UnsubscribeZConstraintAction();
-                m_ZConstraintAction = value;
-                SubscribeZConstraintAction();
-            }
-        }
-
-        [SerializeField]
-        [Tooltip("The Input System Action used to cause the manipulated device(s) to reset position or rotation (depending on the effective manipulation mode). Must be a Button Control.")]
-        InputActionReference m_ResetAction;
-        /// <summary>
-        /// The Input System Action used to cause the manipulated device(s) to reset position or rotation
-        /// (depending on the effective manipulation mode).
-        /// Must be a <see cref="ButtonControl"/>.
-        /// </summary>
-        /// <remarks>
-        /// Resets position to <see cref="Vector3.zero"/> and rotation to <see cref="Quaternion.identity"/>.
-        /// May be combined with axis constraints (<see cref="xConstraintAction"/>, <see cref="yConstraintAction"/>, and <see cref="zConstraintAction"/>).
-        /// </remarks>
-        public InputActionReference resetAction
-        {
-            get => m_ResetAction;
-            set
-            {
-                UnsubscribeResetAction();
-                m_ResetAction = value;
-                SubscribeResetAction();
-            }
-        }
-
-        [SerializeField]
-        [Tooltip("The Input System Action used to toggle the cursor lock mode for the game window when pressed. Must be a Button Control.")]
-        InputActionReference m_ToggleCursorLockAction;
-        /// <summary>
-        /// The Input System Action used to toggle the cursor lock mode for the game window when pressed.
-        /// Must be a <see cref="ButtonControl"/>.
-        /// </summary>
-        /// <seealso cref="Cursor.lockState"/>
-        /// <seealso cref="desiredCursorLockMode"/>
-        public InputActionReference toggleCursorLockAction
-        {
-            get => m_ToggleCursorLockAction;
-            set
-            {
-                UnsubscribeToggleCursorLockAction();
-                m_ToggleCursorLockAction = value;
-                SubscribeToggleCursorLockAction();
-            }
-        }
-
-        [SerializeField]
-        [Tooltip("The Input System Action used to toggle enable translation from keyboard inputs when pressed. Must be a Button Control.")]
-        InputActionReference m_ToggleDevicePositionTargetAction;
-        /// <summary>
-        /// The Input System Action used to toggle enable translation from keyboard inputs when pressed.
-        /// Must be a <see cref="ButtonControl"/>.
-        /// </summary>
-        /// <seealso cref="keyboardXTranslateAction"/>
-        /// <seealso cref="keyboardYTranslateAction"/>
-        /// <seealso cref="keyboardZTranslateAction"/>
-        public InputActionReference toggleDevicePositionTargetAction
-        {
-            get => m_ToggleDevicePositionTargetAction;
-            set
-            {
-                UnsubscribeToggleDevicePositionTargetAction();
-                m_ToggleDevicePositionTargetAction = value;
-                SubscribeToggleDevicePositionTargetAction();
-            }
-        }
-
-        [SerializeField]
-        [Tooltip("The Input System Action used to toggle enable manipulation of the Primary2DAxis of the controllers when pressed. Must be a Button Control.")]
-        InputActionReference m_TogglePrimary2DAxisTargetAction;
-        /// <summary>
-        /// The Input System action used to toggle enable manipulation of the <see cref="Axis2DTargets.Primary2DAxis"/> of the controllers when pressed.
-        /// Must be a <see cref="ButtonControl"/>.
-        /// </summary>
-        /// <seealso cref="toggleSecondary2DAxisTargetAction"/>
-        /// <seealso cref="toggleDevicePositionTargetAction"/>
-        /// <seealso cref="axis2DAction"/>
-        public InputActionReference togglePrimary2DAxisTargetAction
-        {
-            get => m_TogglePrimary2DAxisTargetAction;
-            set
-            {
-                UnsubscribeTogglePrimary2DAxisTargetAction();
-                m_TogglePrimary2DAxisTargetAction = value;
-                SubscribeTogglePrimary2DAxisTargetAction();
-            }
-        }
 
         
-        [SerializeField]
-        [Tooltip("The Input System Action used to toggle enable manipulation of the Secondary2DAxis of the controllers when pressed. Must be a Button Control.")]
-        InputActionReference m_ToggleSecondary2DAxisTargetAction;
-        /// <summary>
-        /// The Input System action used to toggle enable manipulation of the <see cref="Axis2DTargets.Secondary2DAxis"/> of the controllers when pressed.
-        /// Must be a <see cref="ButtonControl"/>.
-        /// </summary>
-        /// <seealso cref="togglePrimary2DAxisTargetAction"/>
-        /// <seealso cref="toggleDevicePositionTargetAction"/>
-        /// <seealso cref="axis2DAction"/>
-        public InputActionReference toggleSecondary2DAxisTargetAction
-        {
-            get => m_ToggleSecondary2DAxisTargetAction;
-            set
-            {
-                UnsubscribeToggleSecondary2DAxisTargetAction();
-                m_ToggleSecondary2DAxisTargetAction = value;
-                SubscribeToggleSecondary2DAxisTargetAction();
-            }
-        }
-        
-        /* jv
-        [SerializeField]
-        [Tooltip("The Input System Action used to control the value of one or more 2D Axis controls on the manipulated controller device(s). Must be a Value Vector2 Control.")]
-        InputActionReference m_Axis2DAction;
-        /// <summary>
-        /// The Input System Action used to control the value of one or more 2D Axis controls on the manipulated controller device(s).
-        /// Must be a <see cref="InputActionType.Value"/> <see cref="Vector2Control"/>.
-        /// </summary>
-        /// <remarks>
-        /// <see cref="togglePrimary2DAxisTargetAction"/> and <see cref="toggleSecondary2DAxisTargetAction"/> toggle enables
-        /// the ability to manipulate 2D Axis controls on the simulated controllers, and this <see cref="axis2DAction"/>
-        /// actually controls the value of them while those controller devices are being manipulated.
-        /// <br />
-        /// Typically bound to WASD on a keyboard, and controls the primary and/or secondary 2D Axis controls on them.
-        /// </remarks>
-        public InputActionReference axis2DAction
-        {
-            get => m_Axis2DAction;
-            set
-            {
-                UnsubscribeAxis2DAction();
-                m_Axis2DAction = value;
-                SubscribeAxis2DAction();
-            }
-        }
-        */
+        bool m_Reset;
+        Vector2 m_RightThumbstick;
+        Vector2 m_LeftThumbstick;
+        Vector2 m_HeadControl;
+        float m_LeftGrip;
+        float m_RightGrip;
+        float m_LeftTrigger;
+        float m_RightTrigger;
+        bool m_ButtonA;
+        bool m_ButtonB;
+        bool m_ButtonX;
+        bool m_ButtonY;
+        bool m_OculusButton;
+        bool m_MenuButton;
 
-        [SerializeField]
-        [Tooltip("The Input System Action used to control one or more 2D Axis controls on the opposite hand of the exclusively manipulated controller device. Must be a Value Vector2 Control.")]
-        InputActionReference m_RestingHandAxis2DAction;
-        /// <summary>
-        /// The Input System Action used to control one or more 2D Axis controls on the opposite hand
-        /// of the exclusively manipulated controller device.
-        /// Must be a <see cref="InputActionType.Value"/> <see cref="Vector2Control"/>.
-        /// </summary>
-        /// <remarks>
-        /// Typically bound to Q and E on a keyboard for the horizontal component, and controls the opposite hand's
-        /// 2D Axis controls when manipulating one (and only one) controller. Can be used to quickly and simultaneously
-        /// control the 2D Axis on the other hand's controller. In a typical setup of continuous movement bound on the left-hand
-        /// controller stick, and turning bound on the right-hand controller stick, while exclusively manipulating the left-hand
-        /// controller to move, this action can be used to trigger turning.
-        /// </remarks>
-        /// <seealso cref="axis2DAction"/>
-        public InputActionReference restingHandAxis2DAction
-        {
-            get => m_RestingHandAxis2DAction;
-            set
-            {
-                UnsubscribeRestingHandAxis2DAction();
-                m_RestingHandAxis2DAction = value;
-                SubscribeRestingHandAxis2DAction();
-            }
-        }
 
-        [SerializeField]
-        [Tooltip("The Input System Action used to control the Grip control of the manipulated controller device(s). Must be a Button Control.")]
-        InputActionReference m_GripAction;
-        /// <summary>
-        /// The Input System Action used to control the Grip control of the manipulated controller device(s).
-        /// Must be a <see cref="ButtonControl"/>.
-        /// </summary>
-        public InputActionReference gripAction
-        {
-            get => m_GripAction;
-            set
-            {
-                UnsubscribeGripAction();
-                m_GripAction = value;
-                SubscribeGripAction();
-            }
-        }
-
-        [SerializeField]
-        [Tooltip("The Input System Action used to control the Trigger control of the manipulated controller device(s). Must be a Button Control.")]
-        InputActionReference m_TriggerAction;
-        /// <summary>
-        /// The Input System Action used to control the Trigger control of the manipulated controller device(s).
-        /// Must be a <see cref="ButtonControl"/>.
-        /// </summary>
-        public InputActionReference triggerAction
-        {
-            get => m_TriggerAction;
-            set
-            {
-                UnsubscribeTriggerAction();
-                m_TriggerAction = value;
-                SubscribeTriggerAction();
-            }
-        }
-
-        [SerializeField]
-        [Tooltip("The Input System Action used to control the PrimaryButton control of the manipulated controller device(s). Must be a Button Control.")]
-        InputActionReference m_PrimaryButtonAction;
-        /// <summary>
-        /// The Input System Action used to control the PrimaryButton control of the manipulated controller device(s).
-        /// Must be a <see cref="ButtonControl"/>.
-        /// </summary>
-        public InputActionReference primaryButtonAction
-        {
-            get => m_PrimaryButtonAction;
-            set
-            {
-                UnsubscribePrimaryButtonAction();
-                m_PrimaryButtonAction = value;
-                SubscribePrimaryButtonAction();
-            }
-        }
-
-        [SerializeField]
-        [Tooltip("The Input System Action used to control the SecondaryButton control of the manipulated controller device(s). Must be a Button Control.")]
-        InputActionReference m_SecondaryButtonAction;
-        /// <summary>
-        /// The Input System Action used to control the SecondaryButton control of the manipulated controller device(s).
-        /// Must be a <see cref="ButtonControl"/>.
-        /// </summary>
-        public InputActionReference secondaryButtonAction
-        {
-            get => m_SecondaryButtonAction;
-            set
-            {
-                UnsubscribeSecondaryButtonAction();
-                m_SecondaryButtonAction = value;
-                SubscribeSecondaryButtonAction();
-            }
-        }
-
-        [SerializeField]
-        [Tooltip("The Input System Action used to control the Menu control of the manipulated controller device(s). Must be a Button Control.")]
-        InputActionReference m_MenuAction;
-        /// <summary>
-        /// The Input System Action used to control the Menu control of the manipulated controller device(s).
-        /// Must be a <see cref="ButtonControl"/>.
-        /// </summary>
-        public InputActionReference menuAction
-        {
-            get => m_MenuAction;
-            set
-            {
-                UnsubscribeMenuAction();
-                m_MenuAction = value;
-                SubscribeMenuAction();
-            }
-        }
-
-        [SerializeField]
-        [Tooltip("The Input System Action used to control the Primary2DAxisClick control of the manipulated controller device(s). Must be a Button Control.")]
-        InputActionReference m_Primary2DAxisClickAction;
-        /// <summary>
-        /// The Input System Action used to control the Primary2DAxisClick control of the manipulated controller device(s).
-        /// Must be a <see cref="ButtonControl"/>.
-        /// </summary>
-        public InputActionReference primary2DAxisClickAction
-        {
-            get => m_Primary2DAxisClickAction;
-            set
-            {
-                UnsubscribePrimary2DAxisClickAction();
-                m_Primary2DAxisClickAction = value;
-                SubscribePrimary2DAxisClickAction();
-            }
-        }
-
-        [SerializeField]
-        [Tooltip("The Input System Action used to control the Secondary2DAxisClick control of the manipulated controller device(s). Must be a Button Control.")]
-        InputActionReference m_Secondary2DAxisClickAction;
-        /// <summary>
-        /// The Input System Action used to control the Secondary2DAxisClick control of the manipulated controller device(s).
-        /// Must be a <see cref="ButtonControl"/>.
-        /// </summary>
-        public InputActionReference secondary2DAxisClickAction
-        {
-            get => m_Secondary2DAxisClickAction;
-            set
-            {
-                UnsubscribeSecondary2DAxisClickAction();
-                m_Secondary2DAxisClickAction = value;
-                SubscribeSecondary2DAxisClickAction();
-            }
-        }
-
-        [SerializeField]
-        [Tooltip("The Input System Action used to control the Primary2DAxisTouch control of the manipulated controller device(s). Must be a Button Control.")]
-        InputActionReference m_Primary2DAxisTouchAction;
-        /// <summary>
-        /// The Input System Action used to control the Primary2DAxisTouch control of the manipulated controller device(s).
-        /// Must be a <see cref="ButtonControl"/>.
-        /// </summary>
-        public InputActionReference primary2DAxisTouchAction
-        {
-            get => m_Primary2DAxisTouchAction;
-            set
-            {
-                UnsubscribePrimary2DAxisTouchAction();
-                m_Primary2DAxisTouchAction = value;
-                SubscribePrimary2DAxisTouchAction();
-            }
-        }
-
-        [SerializeField]
-        [Tooltip("The Input System Action used to control the Secondary2DAxisTouch control of the manipulated controller device(s). Must be a Button Control.")]
-        InputActionReference m_Secondary2DAxisTouchAction;
-        /// <summary>
-        /// The Input System Action used to control the Secondary2DAxisTouch control of the manipulated controller device(s).
-        /// Must be a <see cref="ButtonControl"/>.
-        /// </summary>
-        public InputActionReference secondary2DAxisTouchAction
-        {
-            get => m_Secondary2DAxisTouchAction;
-            set
-            {
-                UnsubscribeSecondary2DAxisTouchAction();
-                m_Secondary2DAxisTouchAction = value;
-                SubscribeSecondary2DAxisTouchAction();
-            }
-        }
-
-        [SerializeField]
-        [Tooltip("The Input System Action used to control the PrimaryTouch control of the manipulated controller device(s). Must be a Button Control.")]
-        InputActionReference m_PrimaryTouchAction;
-        /// <summary>
-        /// The Input System Action used to control the PrimaryTouch control of the manipulated controller device(s).
-        /// Must be a <see cref="ButtonControl"/>.
-        /// </summary>
-        public InputActionReference primaryTouchAction
-        {
-            get => m_PrimaryTouchAction;
-            set
-            {
-                UnsubscribePrimaryTouchAction();
-                m_PrimaryTouchAction = value;
-                SubscribePrimaryTouchAction();
-            }
-        }
-
-        [SerializeField]
-        [Tooltip("The Input System Action used to control the SecondaryTouch control of the manipulated controller device(s). Must be a Button Control.")]
-        InputActionReference m_SecondaryTouchAction;
-        /// <summary>
-        /// The Input System Action used to control the SecondaryTouch control of the manipulated controller device(s).
-        /// Must be a <see cref="ButtonControl"/>.
-        /// </summary>
-        public InputActionReference secondaryTouchAction
-        {
-            get => m_SecondaryTouchAction;
-            set
-            {
-                UnsubscribeSecondaryTouchAction();
-                m_SecondaryTouchAction = value;
-                SubscribeSecondaryTouchAction();
-            }
-        }
 
         [SerializeField]
         [Tooltip("The Transform that contains the Camera. This is usually the \"Head\" of XR rigs. Automatically set to the first enabled camera tagged MainCamera if unset.")]
@@ -886,22 +152,6 @@ namespace UnityEngine.XR.Interaction.Toolkit.Inputs.Simulation
             set => m_CameraTransform = value;
         }
 
-        [SerializeField]
-        [Tooltip("The coordinate space in which keyboard translation should operate.")]
-        Space m_KeyboardTranslateSpace = Space.Local;
-        /// <summary>
-        /// The coordinate space in which keyboard translation should operate.
-        /// </summary>
-        /// <seealso cref="Space"/>
-        /// <seealso cref="mouseTranslateSpace"/>
-        /// <seealso cref="keyboardXTranslateAction"/>
-        /// <seealso cref="keyboardYTranslateAction"/>
-        /// <seealso cref="keyboardZTranslateAction"/>
-        public Space keyboardTranslateSpace
-        {
-            get => m_KeyboardTranslateSpace;
-            set => m_KeyboardTranslateSpace = value;
-        }
 
         [SerializeField]
         [Tooltip("The coordinate space in which mouse translation should operate.")]
@@ -917,50 +167,6 @@ namespace UnityEngine.XR.Interaction.Toolkit.Inputs.Simulation
             set => m_MouseTranslateSpace = value;
         }
 
-        [SerializeField]
-        [Tooltip("Speed of translation in the x-axis (left/right) when triggered by keyboard input.")]
-        float m_KeyboardXTranslateSpeed = 0.2f;
-        /// <summary>
-        /// Speed of translation in the x-axis (left/right) when triggered by keyboard input.
-        /// </summary>
-        /// <seealso cref="keyboardXTranslateAction"/>
-        /// <seealso cref="keyboardYTranslateSpeed"/>
-        /// <seealso cref="keyboardZTranslateSpeed"/>
-        public float keyboardXTranslateSpeed
-        {
-            get => m_KeyboardXTranslateSpeed;
-            set => m_KeyboardXTranslateSpeed = value;
-        }
-
-        [SerializeField]
-        [Tooltip("Speed of translation in the y-axis (up/down) when triggered by keyboard input.")]
-        float m_KeyboardYTranslateSpeed = 0.2f;
-        /// <summary>
-        /// Speed of translation in the y-axis (up/down) when triggered by keyboard input.
-        /// </summary>
-        /// <seealso cref="keyboardYTranslateAction"/>
-        /// <seealso cref="keyboardXTranslateSpeed"/>
-        /// <seealso cref="keyboardZTranslateSpeed"/>
-        public float keyboardYTranslateSpeed
-        {
-            get => m_KeyboardYTranslateSpeed;
-            set => m_KeyboardYTranslateSpeed = value;
-        }
-
-        [SerializeField]
-        [Tooltip("Speed of translation in the z-axis (forward/back) when triggered by keyboard input.")]
-        float m_KeyboardZTranslateSpeed = 0.2f;
-        /// <summary>
-        /// Speed of translation in the z-axis (forward/back) when triggered by keyboard input.
-        /// </summary>
-        /// <seealso cref="keyboardZTranslateAction"/>
-        /// <seealso cref="keyboardXTranslateSpeed"/>
-        /// <seealso cref="keyboardYTranslateSpeed"/>
-        public float keyboardZTranslateSpeed
-        {
-            get => m_KeyboardZTranslateSpeed;
-            set => m_KeyboardZTranslateSpeed = value;
-        }
 
         [SerializeField]
         [Tooltip("Sensitivity of translation in the x-axis (left/right) when triggered by mouse input.")]
@@ -992,20 +198,6 @@ namespace UnityEngine.XR.Interaction.Toolkit.Inputs.Simulation
             set => m_MouseYTranslateSensitivity = value;
         }
 
-        [SerializeField]
-        [Tooltip("Sensitivity of translation in the z-axis (forward/back) when triggered by mouse scroll input.")]
-        float m_MouseScrollTranslateSensitivity = 0.0002f;
-        /// <summary>
-        /// Sensitivity of translation in the z-axis (forward/back) when triggered by mouse scroll input.
-        /// </summary>
-        /// <seealso cref="mouseScrollAction"/>
-        /// <seealso cref="mouseXTranslateSensitivity"/>
-        /// <seealso cref="mouseYTranslateSensitivity"/>
-        public float mouseScrollTranslateSensitivity
-        {
-            get => m_MouseScrollTranslateSensitivity;
-            set => m_MouseScrollTranslateSensitivity = value;
-        }
 
         [SerializeField]
         [Tooltip("Sensitivity of rotation along the x-axis (pitch) when triggered by mouse input.")]
@@ -1067,58 +259,23 @@ namespace UnityEngine.XR.Interaction.Toolkit.Inputs.Simulation
             get => m_MouseYRotateInvert;
             set => m_MouseYRotateInvert = value;
         }
-
-        [SerializeField]
-        [Tooltip("The desired cursor lock mode to toggle to from None (either Locked or Confined).")]
-        CursorLockMode m_DesiredCursorLockMode = CursorLockMode.Locked;
-        /// <summary>
-        /// The desired cursor lock mode to toggle to from <see cref="CursorLockMode.None"/>
-        /// (either <see cref="CursorLockMode.Locked"/> or <see cref="CursorLockMode.Confined"/>).
-        /// </summary>
-        /// <seealso cref="toggleCursorLockAction"/>
-        public CursorLockMode desiredCursorLockMode
-        {
-            get => m_DesiredCursorLockMode;
-            set => m_DesiredCursorLockMode = value;
-        }
+        
 
         /// <summary>
         /// The transformation mode in which the mouse should operate.
         /// </summary>
         public TransformationMode mouseTransformationMode { get; set; } = TransformationMode.Rotate;
 
-        /// <summary>
-        /// One or more 2D Axis controls that keyboard input should apply to (or none).
-        /// </summary>
-        /// <remarks>
-        /// Used to control a combination of the position (<see cref="Axis2DTargets.Position"/>),
-        /// primary 2D axis (<see cref="Axis2DTargets.Primary2DAxis"/>), or
-        /// secondary 2D axis (<see cref="Axis2DTargets.Secondary2DAxis"/>) of manipulated device(s).
-        /// </remarks>
-        /// <seealso cref="keyboardXTranslateAction"/>
-        /// <seealso cref="keyboardYTranslateAction"/>
-        /// <seealso cref="keyboardZTranslateAction"/>
-        /// <seealso cref="axis2DAction"/>
-        /// <seealso cref="restingHandAxis2DAction"/>
-        public Axis2DTargets axis2DTargets { get; set; } = Axis2DTargets.Primary2DAxis;
 
         //test
         public float stuff;
 
-        float m_KeyboardXTranslateInput;
-        float m_KeyboardYTranslateInput;
-        float m_KeyboardZTranslateInput;
-
-        //jv bool m_ManipulateLeftInput;
-        //jv bool m_ManipulateRightInput;
-        //jv bool m_ManipulateHeadInput;
 
         Vector2 m_ManipulateLeftHandInput;
         Vector2 m_ManipulateRightHandInput;
         Vector2 m_ManipulateHeadInput;
 
         Vector2 m_MouseDeltaInput;
-        Vector2 m_MouseScrollInput;
 
         bool m_RotateModeOverrideInput;
         bool m_NegateModeInput;
@@ -1129,22 +286,13 @@ namespace UnityEngine.XR.Interaction.Toolkit.Inputs.Simulation
 
         bool m_ResetInput;
 
-        Vector2 m_Axis2DInput;
-        Vector2 m_RestingHandAxis2DInput;
 
         bool m_GripInput;
         bool m_TriggerInput;
         bool m_PrimaryButtonInput;
-        bool m_SecondaryButtonInput;
         bool m_MenuInput;
         bool m_Primary2DAxisClickInput;
-        bool m_Secondary2DAxisClickInput;
-        bool m_Primary2DAxisTouchInput;
-        bool m_Secondary2DAxisTouchInput;
-        bool m_PrimaryTouchInput;
-        bool m_SecondaryTouchInput;
 
-        bool m_ManipulatedRestingHandAxis2D;
 
         Vector3 m_LeftControllerEuler;
         Vector3 m_RightControllerEuler;
@@ -1170,7 +318,6 @@ namespace UnityEngine.XR.Interaction.Toolkit.Inputs.Simulation
             m_LeftControllerState.devicePosition += new Vector3(-0.1f, 0f, 0f);
             m_RightControllerState.devicePosition += new Vector3(0.1f, 0f, 0f);
 
-            XRSimulatedController.s = 3;
         }
 
 
@@ -1189,45 +336,28 @@ namespace UnityEngine.XR.Interaction.Toolkit.Inputs.Simulation
 
             AddDevices();
 
-            SubscribeKeyboardXTranslateAction();
-            SubscribeKeyboardYTranslateAction();
-            SubscribeKeyboardZTranslateAction();
-            //jv SubscribeManipulateLeftAction();
-            //jv SubscribeManipulateRightAction();
-            //jv SubscribeToggleManipulateLeftAction();
-            //jv SubscribeToggleManipulateRightAction();
-            //jv SubscribeManipulateHeadAction();
+
+            SubscribeResetAction();
+            SubscribeRightThumbstickAction();
+            SubscribeLeftThumbstickAction();
+            SubscribeHeadControlAction();
+            SubscribeLeftGripAction();
+            SubscribeRightGripAction();
+            SubscribeLeftTriggerAction();
+            SubscribeRightTriggerAction();
+            SubscribeButtonAAction();
+            SubscribeButtonBAction();
+            SubscribeButtonXAction();
+            SubscribeButtonYAction();
+            SubscribeOculusButtonAction();
+            SubscribeMenuButtonAction();
 
             SubscribeManipulateLeftHandAction();
             SubscribeManipulateRightHandAction();
             SubscribeManipulateHeadAction();
 
-            SubscribeMouseDeltaAction();
-            SubscribeMouseScrollAction();
-            SubscribeRotateModeOverrideAction();
-            SubscribeToggleMouseTransformationModeAction();
-            SubscribeNegateModeAction();
-            SubscribeXConstraintAction();
-            SubscribeYConstraintAction();
-            SubscribeZConstraintAction();
-            SubscribeResetAction();
-            SubscribeToggleCursorLockAction();
-            SubscribeToggleDevicePositionTargetAction();
-            SubscribeTogglePrimary2DAxisTargetAction();
-            SubscribeToggleSecondary2DAxisTargetAction();
-            //jv SubscribeAxis2DAction();
-            SubscribeRestingHandAxis2DAction();
-            SubscribeGripAction();
-            SubscribeTriggerAction();
-            SubscribePrimaryButtonAction();
-            SubscribeSecondaryButtonAction();
-            SubscribeMenuAction();
-            SubscribePrimary2DAxisClickAction();
-            SubscribeSecondary2DAxisClickAction();
-            SubscribePrimary2DAxisTouchAction();
-            SubscribeSecondary2DAxisTouchAction();
-            SubscribePrimaryTouchAction();
-            SubscribeSecondaryTouchAction();
+
+
         }
 
         /// <summary>
@@ -1237,45 +367,26 @@ namespace UnityEngine.XR.Interaction.Toolkit.Inputs.Simulation
         {
             RemoveDevices();
 
-            UnsubscribeKeyboardXTranslateAction();
-            UnsubscribeKeyboardYTranslateAction();
-            UnsubscribeKeyboardZTranslateAction();
-            //jv UnsubscribeManipulateLeftAction();
-            //jv UnsubscribeManipulateRightAction();
-            //jv UnsubscribeToggleManipulateLeftAction();
-            //jv UnsubscribeToggleManipulateRightAction();
-            //jv UnsubscribeManipulateHeadAction();
+            UnsubscribeResetAction();
+            UnsubscribeRightThumbstickAction();
+            UnsubscribeLeftThumbstickAction();
+            UnsubscribeHeadControlAction();
+            UnsubscribeLeftGripAction();
+            UnsubscribeRightGripAction();
+            UnsubscribeLeftTriggerAction();
+            UnsubscribeRightTriggerAction();
+            UnsubscribeButtonAAction();
+            UnsubscribeButtonBAction();
+            UnsubscribeButtonXAction();
+            UnsubscribeButtonYAction();
+            UnsubscribeOculusButtonAction();
+            UnsubscribeMenuButtonAction();
 
             UnsubscribeManipulateLeftHandAction();
             UnsubscribeManipulateRightHandAction();
             UnsubscribeManipulateHeadAction();
 
-            UnsubscribeMouseDeltaAction();
-            UnsubscribeMouseScrollAction();
-            UnsubscribeRotateModeOverrideAction();
-            UnsubscribeToggleMouseTransformationModeAction();
-            UnsubscribeNegateModeAction();
-            UnsubscribeXConstraintAction();
-            UnsubscribeYConstraintAction();
-            UnsubscribeZConstraintAction();
-            UnsubscribeResetAction();
-            UnsubscribeToggleCursorLockAction();
-            UnsubscribeToggleDevicePositionTargetAction();
-            UnsubscribeTogglePrimary2DAxisTargetAction();
-            UnsubscribeToggleSecondary2DAxisTargetAction();
-            //jv UnsubscribeAxis2DAction();
-            UnsubscribeRestingHandAxis2DAction();
-            UnsubscribeGripAction();
-            UnsubscribeTriggerAction();
-            UnsubscribePrimaryButtonAction();
-            UnsubscribeSecondaryButtonAction();
-            UnsubscribeMenuAction();
-            UnsubscribePrimary2DAxisClickAction();
-            UnsubscribeSecondary2DAxisClickAction();
-            UnsubscribePrimary2DAxisTouchAction();
-            UnsubscribeSecondary2DAxisTouchAction();
-            UnsubscribePrimaryTouchAction();
-            UnsubscribeSecondaryTouchAction();
+
         }
 
         /// <summary>
@@ -1330,39 +441,7 @@ namespace UnityEngine.XR.Interaction.Toolkit.Inputs.Simulation
             var cameraParentRotation = cameraParent != null ? cameraParent.rotation : Quaternion.identity;
             var inverseCameraParentRotation = Quaternion.Inverse(cameraParentRotation);
 
-            /*
-            if ((axis2DTargets & Axis2DTargets.Position) != 0)
-            {
-                // Determine frame of reference
-                GetAxes(m_KeyboardTranslateSpace, m_CameraTransform, out var right, out var up, out var forward);
-
-                // Keyboard translation
-                var deltaPosition =
-                    right * (m_KeyboardXTranslateInput * m_KeyboardXTranslateSpeed * Time.deltaTime) +
-                    up * (m_KeyboardYTranslateInput * m_KeyboardYTranslateSpeed * Time.deltaTime) +
-                    forward * (m_KeyboardZTranslateInput * m_KeyboardZTranslateSpeed * Time.deltaTime);
-
-                if (m_ManipulateLeftInput)
-                {
-                    var deltaRotation = GetDeltaRotation(m_KeyboardTranslateSpace, m_LeftControllerState, inverseCameraParentRotation);
-                    m_LeftControllerState.devicePosition += deltaRotation * deltaPosition;
-                }
-
-                if (m_ManipulateRightInput)
-                {
-                    var deltaRotation = GetDeltaRotation(m_KeyboardTranslateSpace, m_RightControllerState, inverseCameraParentRotation);
-                    m_RightControllerState.devicePosition += deltaRotation * deltaPosition;
-                }
-
-                if (m_ManipulateHeadInput)
-                {
-                    var deltaRotation = GetDeltaRotation(m_KeyboardTranslateSpace, m_HMDState, inverseCameraParentRotation);
-                    m_HMDState.centerEyePosition += deltaRotation * deltaPosition;
-                    m_HMDState.devicePosition = m_HMDState.centerEyePosition;
-                }
-            }
-            */
-
+ 
         /* for now, ignore translation.  Only the head needs to translate.  the left and right controls will only rotate
         if ((mouseTransformationMode == TransformationMode.Translate && !m_RotateModeOverrideInput && !m_NegateModeInput) ||
             (mouseTransformationMode == TransformationMode.Rotate || m_RotateModeOverrideInput) && m_NegateModeInput)*/
@@ -1654,67 +733,8 @@ namespace UnityEngine.XR.Interaction.Toolkit.Inputs.Simulation
         /// </summary>
         protected virtual void ProcessAxis2DControlInput()
         {
-            //if (!m_ManipulateLeftInput && !m_ManipulateRightInput)
-            //    return;
-
-            // if ((axis2DTargets & Axis2DTargets.Primary2DAxis) != 0)
-            // {
-            //if (m_ManipulateLeftInput)
-                m_LeftControllerState.primary2DAxis = m_ManipulateLeftHandInput; // m_Axis2DInput;
-
-            //if (m_ManipulateRightInput)
+            m_LeftControllerState.primary2DAxis = m_ManipulateLeftHandInput; // m_Axis2DInput;
             m_RightControllerState.primary2DAxis = m_ManipulateRightHandInput; // m_Axis2DInput;
-
-            /*  Really don't know what this does
-                if (m_ManipulateLeftInput ^ m_ManipulateRightInput)
-                {
-                    if (m_RestingHandAxis2DInput != Vector2.zero || m_ManipulatedRestingHandAxis2D)
-                    {
-                        if (m_ManipulateLeftInput)
-                            m_RightControllerState.primary2DAxis = m_RestingHandAxis2DInput;
-
-                        if (m_ManipulateRightInput)
-                            m_LeftControllerState.primary2DAxis = m_RestingHandAxis2DInput;
-
-                        m_ManipulatedRestingHandAxis2D = m_RestingHandAxis2DInput != Vector2.zero;
-                    }
-                    else
-                    {
-                        m_ManipulatedRestingHandAxis2D = false;
-                    }
-                }
-            */
-           // }
-
-            /* don't know what this is.  Secondary axis??
-             * 
-            if ((axis2DTargets & Axis2DTargets.Secondary2DAxis) != 0)
-            {
-                if (m_ManipulateLeftInput)
-                    m_LeftControllerState.secondary2DAxis = m_Axis2DInput;
-
-                if (m_ManipulateRightInput)
-                    m_RightControllerState.secondary2DAxis = m_Axis2DInput;
-
-                if (m_ManipulateLeftInput ^ m_ManipulateRightInput)
-                {
-                    if (m_RestingHandAxis2DInput != Vector2.zero || m_ManipulatedRestingHandAxis2D)
-                    {
-                        if (m_ManipulateLeftInput)
-                            m_RightControllerState.secondary2DAxis = m_RestingHandAxis2DInput;
-
-                        if (m_ManipulateRightInput)
-                            m_LeftControllerState.secondary2DAxis = m_RestingHandAxis2DInput;
-
-                        m_ManipulatedRestingHandAxis2D = m_RestingHandAxis2DInput != Vector2.zero;
-                    }
-                    else
-                    {
-                        m_ManipulatedRestingHandAxis2D = false;
-                    }
-                }
-            }
-            */
         }
        
 
@@ -1731,14 +751,8 @@ namespace UnityEngine.XR.Interaction.Toolkit.Inputs.Simulation
             controllerState.trigger = m_TriggerInput ? 1f : 0f;
             controllerState.WithButton(ControllerButton.TriggerButton, m_TriggerInput);
             controllerState.WithButton(ControllerButton.PrimaryButton, m_PrimaryButtonInput);
-            controllerState.WithButton(ControllerButton.SecondaryButton, m_SecondaryButtonInput);
             controllerState.WithButton(ControllerButton.MenuButton, m_MenuInput);
             controllerState.WithButton(ControllerButton.Primary2DAxisClick, m_Primary2DAxisClickInput);
-            controllerState.WithButton(ControllerButton.Secondary2DAxisClick, m_Secondary2DAxisClickInput);
-            controllerState.WithButton(ControllerButton.Primary2DAxisTouch, m_Primary2DAxisTouchInput);
-            controllerState.WithButton(ControllerButton.Secondary2DAxisTouch, m_Secondary2DAxisTouchInput);
-            controllerState.WithButton(ControllerButton.PrimaryTouch, m_PrimaryTouchInput);
-            controllerState.WithButton(ControllerButton.SecondaryTouch, m_SecondaryTouchInput);
         }
 
         /// <summary>
@@ -1753,14 +767,9 @@ namespace UnityEngine.XR.Interaction.Toolkit.Inputs.Simulation
             controllerState.trigger = m_TriggerInput ? 1f : 0f;
             controllerState.WithButton(ControllerButton.TriggerButton, m_TriggerInput);
             controllerState.WithButton(ControllerButton.PrimaryButton, m_PrimaryButtonInput);
-            controllerState.WithButton(ControllerButton.SecondaryButton, m_SecondaryButtonInput);
             controllerState.WithButton(ControllerButton.MenuButton, m_MenuInput);
             controllerState.WithButton(ControllerButton.Primary2DAxisClick, m_Primary2DAxisClickInput);
-            controllerState.WithButton(ControllerButton.Secondary2DAxisClick, m_Secondary2DAxisClickInput);
-            controllerState.WithButton(ControllerButton.Primary2DAxisTouch, m_Primary2DAxisTouchInput);
-            controllerState.WithButton(ControllerButton.Secondary2DAxisTouch, m_Secondary2DAxisTouchInput);
-            controllerState.WithButton(ControllerButton.PrimaryTouch, m_PrimaryTouchInput);
-            controllerState.WithButton(ControllerButton.SecondaryTouch, m_SecondaryTouchInput);
+
         }
 
 
@@ -1943,245 +952,7 @@ namespace UnityEngine.XR.Interaction.Toolkit.Inputs.Simulation
             }
         }
 
-        CursorLockMode Negate(CursorLockMode mode)
-        {
-            switch (mode)
-            {
-                case CursorLockMode.None:
-                    return m_DesiredCursorLockMode;
-                case CursorLockMode.Locked:
-                case CursorLockMode.Confined:
-                    return CursorLockMode.None;
-                default:
-                    Assert.IsTrue(false, $"Unhandled {nameof(mode)}={mode}.");
-                    return CursorLockMode.None;
-            }
-        }
 
-        void SubscribeKeyboardXTranslateAction() => Subscribe(m_KeyboardXTranslateAction, OnKeyboardXTranslatePerformed, OnKeyboardXTranslateCanceled);
-        void UnsubscribeKeyboardXTranslateAction() => Unsubscribe(m_KeyboardXTranslateAction, OnKeyboardXTranslatePerformed, OnKeyboardXTranslateCanceled);
-
-        void SubscribeKeyboardYTranslateAction() => Subscribe(m_KeyboardYTranslateAction, OnKeyboardYTranslatePerformed, OnKeyboardYTranslateCanceled);
-        void UnsubscribeKeyboardYTranslateAction() => Unsubscribe(m_KeyboardYTranslateAction, OnKeyboardYTranslatePerformed, OnKeyboardYTranslateCanceled);
-
-        void SubscribeKeyboardZTranslateAction() => Subscribe(m_KeyboardZTranslateAction, OnKeyboardZTranslatePerformed, OnKeyboardZTranslateCanceled);
-        void UnsubscribeKeyboardZTranslateAction() => Unsubscribe(m_KeyboardZTranslateAction, OnKeyboardZTranslatePerformed, OnKeyboardZTranslateCanceled);
-
-        /* jv
-        void SubscribeManipulateLeftAction() => Subscribe(m_ManipulateLeftAction, OnManipulateLeftPerformed, OnManipulateLeftCanceled);
-        void UnsubscribeManipulateLeftAction() => Unsubscribe(m_ManipulateLeftAction, OnManipulateLeftPerformed, OnManipulateLeftCanceled);
-
-        void SubscribeManipulateRightAction() => Subscribe(m_ManipulateRightAction, OnManipulateRightPerformed, OnManipulateRightCanceled);
-        void UnsubscribeManipulateRightAction() => Unsubscribe(m_ManipulateRightAction, OnManipulateRightPerformed, OnManipulateRightCanceled);
-
-        void SubscribeToggleManipulateLeftAction() => Subscribe(m_ToggleManipulateLeftAction, OnToggleManipulateLeftPerformed);
-        void UnsubscribeToggleManipulateLeftAction() => Unsubscribe(m_ToggleManipulateLeftAction, OnToggleManipulateLeftPerformed);
-
-        void SubscribeToggleManipulateRightAction() => Subscribe(m_ToggleManipulateRightAction, OnToggleManipulateRightPerformed);
-        void UnsubscribeToggleManipulateRightAction() => Unsubscribe(m_ToggleManipulateRightAction, OnToggleManipulateRightPerformed);
-
-        void SubscribeManipulateHeadAction() => Subscribe(m_ManipulateHeadAction, OnManipulateHeadPerformed, OnManipulateHeadCanceled);
-        void UnsubscribeManipulateHeadAction() => Unsubscribe(m_ManipulateHeadAction, OnManipulateHeadPerformed, OnManipulateHeadCanceled);
-        */
-        void SubscribeManipulateLeftHandAction() => Subscribe(m_ManipulateLeftHandAction, OnManipulateLeftHandPerformed, OnManipulateLeftHandCanceled);
-        void UnsubscribeManipulateLeftHandAction() => Unsubscribe(m_ManipulateLeftHandAction, OnManipulateLeftHandPerformed, OnManipulateLeftHandCanceled);
-
-        void SubscribeManipulateRightHandAction() => Subscribe(m_ManipulateRightHandAction, OnManipulateRightHandPerformed, OnManipulateRightHandCanceled);
-        void UnsubscribeManipulateRightHandAction() => Unsubscribe(m_ManipulateRightHandAction, OnManipulateRightHandPerformed, OnManipulateRightHandCanceled);
-
-        void SubscribeManipulateHeadAction() => Subscribe(m_ManipulateHeadAction, OnManipulateHeadPerformed, OnManipulateHeadCanceled);
-        void UnsubscribeManipulateHeadAction() => Unsubscribe(m_ManipulateHeadAction, OnManipulateHeadPerformed, OnManipulateHeadCanceled);
-
-
-        void SubscribeMouseDeltaAction() => Subscribe(m_MouseDeltaAction, OnMouseDeltaPerformed, OnMouseDeltaCanceled);
-        void UnsubscribeMouseDeltaAction() => Unsubscribe(m_MouseDeltaAction, OnMouseDeltaPerformed, OnMouseDeltaCanceled);
-
-        void SubscribeMouseScrollAction() => Subscribe(m_MouseScrollAction, OnMouseScrollPerformed, OnMouseScrollCanceled);
-        void UnsubscribeMouseScrollAction() => Unsubscribe(m_MouseScrollAction, OnMouseScrollPerformed, OnMouseScrollCanceled);
-
-        void SubscribeRotateModeOverrideAction() => Subscribe(m_RotateModeOverrideAction, OnRotateModeOverridePerformed, OnRotateModeOverrideCanceled);
-        void UnsubscribeRotateModeOverrideAction() => Unsubscribe(m_RotateModeOverrideAction, OnRotateModeOverridePerformed, OnRotateModeOverrideCanceled);
-
-        void SubscribeToggleMouseTransformationModeAction() => Subscribe(m_ToggleMouseTransformationModeAction, OnToggleMouseTransformationModePerformed);
-        void UnsubscribeToggleMouseTransformationModeAction() => Unsubscribe(m_ToggleMouseTransformationModeAction, OnToggleMouseTransformationModePerformed);
-
-        void SubscribeNegateModeAction() => Subscribe(m_NegateModeAction, OnNegateModePerformed, OnNegateModeCanceled);
-        void UnsubscribeNegateModeAction() => Unsubscribe(m_NegateModeAction, OnNegateModePerformed, OnNegateModeCanceled);
-
-        void SubscribeXConstraintAction() => Subscribe(m_XConstraintAction, OnXConstraintPerformed, OnXConstraintCanceled);
-        void UnsubscribeXConstraintAction() => Unsubscribe(m_XConstraintAction, OnXConstraintPerformed, OnXConstraintCanceled);
-
-        void SubscribeYConstraintAction() => Subscribe(m_YConstraintAction, OnYConstraintPerformed, OnYConstraintCanceled);
-        void UnsubscribeYConstraintAction() => Unsubscribe(m_YConstraintAction, OnYConstraintPerformed, OnYConstraintCanceled);
-
-        void SubscribeZConstraintAction() => Subscribe(m_ZConstraintAction, OnZConstraintPerformed, OnZConstraintCanceled);
-        void UnsubscribeZConstraintAction() => Unsubscribe(m_ZConstraintAction, OnZConstraintPerformed, OnZConstraintCanceled);
-
-        void SubscribeResetAction() => Subscribe(m_ResetAction, OnResetPerformed, OnResetCanceled);
-        void UnsubscribeResetAction() => Unsubscribe(m_ResetAction, OnResetPerformed, OnResetCanceled);
-
-        void SubscribeToggleCursorLockAction() => Subscribe(m_ToggleCursorLockAction, OnToggleCursorLockPerformed);
-        void UnsubscribeToggleCursorLockAction() => Unsubscribe(m_ToggleCursorLockAction, OnToggleCursorLockPerformed);
-
-        void SubscribeToggleDevicePositionTargetAction() => Subscribe(m_ToggleDevicePositionTargetAction, OnToggleDevicePositionTargetPerformed);
-        void UnsubscribeToggleDevicePositionTargetAction() => Unsubscribe(m_ToggleDevicePositionTargetAction, OnToggleDevicePositionTargetPerformed);
-
-        void SubscribeTogglePrimary2DAxisTargetAction() => Subscribe(m_TogglePrimary2DAxisTargetAction, OnTogglePrimary2DAxisTargetPerformed);
-        void UnsubscribeTogglePrimary2DAxisTargetAction() => Unsubscribe(m_TogglePrimary2DAxisTargetAction, OnTogglePrimary2DAxisTargetPerformed);
-
-        void SubscribeToggleSecondary2DAxisTargetAction() => Subscribe(m_ToggleSecondary2DAxisTargetAction, OnToggleSecondary2DAxisTargetPerformed);
-        void UnsubscribeToggleSecondary2DAxisTargetAction() => Unsubscribe(m_ToggleSecondary2DAxisTargetAction, OnToggleSecondary2DAxisTargetPerformed);
-
-        //jv void SubscribeAxis2DAction() => Subscribe(m_Axis2DAction, OnAxis2DPerformed, OnAxis2DCanceled);
-        //jv void UnsubscribeAxis2DAction() => Unsubscribe(m_Axis2DAction, OnAxis2DPerformed, OnAxis2DCanceled);
-
-        void SubscribeRestingHandAxis2DAction() => Subscribe(m_RestingHandAxis2DAction, OnRestingHandAxis2DPerformed, OnRestingHandAxis2DCanceled);
-        void UnsubscribeRestingHandAxis2DAction() => Unsubscribe(m_RestingHandAxis2DAction, OnRestingHandAxis2DPerformed, OnRestingHandAxis2DCanceled);
-
-        void SubscribeGripAction() => Subscribe(m_GripAction, OnGripPerformed, OnGripCanceled);
-        void UnsubscribeGripAction() => Unsubscribe(m_GripAction, OnGripPerformed, OnGripCanceled);
-
-        void SubscribeTriggerAction() => Subscribe(m_TriggerAction, OnTriggerPerformed, OnTriggerCanceled);
-        void UnsubscribeTriggerAction() => Unsubscribe(m_TriggerAction, OnTriggerPerformed, OnTriggerCanceled);
-
-        void SubscribePrimaryButtonAction() => Subscribe(m_PrimaryButtonAction, OnPrimaryButtonPerformed, OnPrimaryButtonCanceled);
-        void UnsubscribePrimaryButtonAction() => Unsubscribe(m_PrimaryButtonAction, OnPrimaryButtonPerformed, OnPrimaryButtonCanceled);
-
-        void SubscribeSecondaryButtonAction() => Subscribe(m_SecondaryButtonAction, OnSecondaryButtonPerformed, OnSecondaryButtonCanceled);
-        void UnsubscribeSecondaryButtonAction() => Unsubscribe(m_SecondaryButtonAction, OnSecondaryButtonPerformed, OnSecondaryButtonCanceled);
-
-        void SubscribeMenuAction() => Subscribe(m_MenuAction, OnMenuPerformed, OnMenuCanceled);
-        void UnsubscribeMenuAction() => Unsubscribe(m_MenuAction, OnMenuPerformed, OnMenuCanceled);
-
-        void SubscribePrimary2DAxisClickAction() => Subscribe(m_Primary2DAxisClickAction, OnPrimary2DAxisClickPerformed, OnPrimary2DAxisClickCanceled);
-        void UnsubscribePrimary2DAxisClickAction() => Unsubscribe(m_Primary2DAxisClickAction, OnPrimary2DAxisClickPerformed, OnPrimary2DAxisClickCanceled);
-
-        void SubscribeSecondary2DAxisClickAction() => Subscribe(m_Secondary2DAxisClickAction, OnSecondary2DAxisClickPerformed, OnSecondary2DAxisClickCanceled);
-        void UnsubscribeSecondary2DAxisClickAction() => Unsubscribe(m_Secondary2DAxisClickAction, OnSecondary2DAxisClickPerformed, OnSecondary2DAxisClickCanceled);
-
-        void SubscribePrimary2DAxisTouchAction() => Subscribe(m_Primary2DAxisTouchAction, OnPrimary2DAxisTouchPerformed, OnPrimary2DAxisTouchCanceled);
-        void UnsubscribePrimary2DAxisTouchAction() => Unsubscribe(m_Primary2DAxisTouchAction, OnPrimary2DAxisTouchPerformed, OnPrimary2DAxisTouchCanceled);
-
-        void SubscribeSecondary2DAxisTouchAction() => Subscribe(m_Secondary2DAxisTouchAction, OnSecondary2DAxisTouchPerformed, OnSecondary2DAxisTouchCanceled);
-        void UnsubscribeSecondary2DAxisTouchAction() => Unsubscribe(m_Secondary2DAxisTouchAction, OnSecondary2DAxisTouchPerformed, OnSecondary2DAxisTouchCanceled);
-
-        void SubscribePrimaryTouchAction() => Subscribe(m_PrimaryTouchAction, OnPrimaryTouchPerformed, OnPrimaryTouchCanceled);
-        void UnsubscribePrimaryTouchAction() => Unsubscribe(m_PrimaryTouchAction, OnPrimaryTouchPerformed, OnPrimaryTouchCanceled);
-
-        void SubscribeSecondaryTouchAction() => Subscribe(m_SecondaryTouchAction, OnSecondaryTouchPerformed, OnSecondaryTouchCanceled);
-        void UnsubscribeSecondaryTouchAction() => Unsubscribe(m_SecondaryTouchAction, OnSecondaryTouchPerformed, OnSecondaryTouchCanceled);
-
-        void OnKeyboardXTranslatePerformed(InputAction.CallbackContext context) => m_KeyboardXTranslateInput = context.ReadValue<float>();
-        void OnKeyboardXTranslateCanceled(InputAction.CallbackContext context) => m_KeyboardXTranslateInput = 0f;
-
-        void OnKeyboardYTranslatePerformed(InputAction.CallbackContext context) => m_KeyboardYTranslateInput = context.ReadValue<float>();
-        void OnKeyboardYTranslateCanceled(InputAction.CallbackContext context) => m_KeyboardYTranslateInput = 0f;
-
-        void OnKeyboardZTranslatePerformed(InputAction.CallbackContext context) => m_KeyboardZTranslateInput = context.ReadValue<float>();
-        void OnKeyboardZTranslateCanceled(InputAction.CallbackContext context) => m_KeyboardZTranslateInput = 0f;
-
-        //jv void OnManipulateLeftPerformed(InputAction.CallbackContext context) => m_ManipulateLeftInput = true;
-        //jv void OnManipulateLeftCanceled(InputAction.CallbackContext context) => m_ManipulateLeftInput = false;
-
-        //jv void OnManipulateRightPerformed(InputAction.CallbackContext context) => m_ManipulateRightInput = true;
-        //jv void OnManipulateRightCanceled(InputAction.CallbackContext context) => m_ManipulateRightInput = false;
-
-        //jv void OnToggleManipulateLeftPerformed(InputAction.CallbackContext context) => m_ManipulateLeftInput = !m_ManipulateLeftInput;
-        //jv void OnToggleManipulateRightPerformed(InputAction.CallbackContext context) => m_ManipulateRightInput = !m_ManipulateRightInput;
-
-        //jv void OnManipulateHeadPerformed(InputAction.CallbackContext context) => m_ManipulateHeadInput = true;
-        //jv void OnManipulateHeadCanceled(InputAction.CallbackContext context) => m_ManipulateHeadInput = false;
-
-        void OnManipulateLeftHandPerformed(InputAction.CallbackContext context) { m_ManipulateLeftHandInput = 10*context.ReadValue<Vector2>();
-            //Debug.Log("raw left=" + m_ManipulateLeftHandInput);
-        }
-        void OnManipulateLeftHandCanceled(InputAction.CallbackContext context) => m_ManipulateLeftHandInput = Vector2.zero;
-
-        void OnManipulateRightHandPerformed(InputAction.CallbackContext context) { m_ManipulateRightHandInput = 10*context.ReadValue<Vector2>();
-            //Debug.Log("raw right=" + m_ManipulateRightHandInput);
-        }
-        void OnManipulateRightHandCanceled(InputAction.CallbackContext context) => m_ManipulateRightHandInput = Vector2.zero;
-
-        void OnManipulateHeadPerformed(InputAction.CallbackContext context) { m_ManipulateHeadInput = 2*context.ReadValue<Vector2>();
-            //Debug.Log("raw head=" + m_ManipulateHeadInput);
-
-        }
-        void OnManipulateHeadCanceled(InputAction.CallbackContext context) => m_ManipulateHeadInput = Vector2.zero;
-
-        void OnMouseDeltaPerformed(InputAction.CallbackContext context) { m_MouseDeltaInput = context.ReadValue<Vector2>();
-            //Debug.Log("raw mouse=" + context );
-        }
-        void OnMouseDeltaCanceled(InputAction.CallbackContext context) => m_MouseDeltaInput = Vector2.zero;
-
-        void OnMouseScrollPerformed(InputAction.CallbackContext context) => m_MouseScrollInput = context.ReadValue<Vector2>();
-        void OnMouseScrollCanceled(InputAction.CallbackContext context) => m_MouseScrollInput = Vector2.zero;
-
-        void OnRotateModeOverridePerformed(InputAction.CallbackContext context) => m_RotateModeOverrideInput = true;
-        void OnRotateModeOverrideCanceled(InputAction.CallbackContext context) => m_RotateModeOverrideInput = false;
-
-        void OnToggleMouseTransformationModePerformed(InputAction.CallbackContext context) => mouseTransformationMode = Negate(mouseTransformationMode);
-
-        void OnNegateModePerformed(InputAction.CallbackContext context) => m_NegateModeInput = true;
-        void OnNegateModeCanceled(InputAction.CallbackContext context) => m_NegateModeInput = false;
-
-        void OnXConstraintPerformed(InputAction.CallbackContext context) => m_XConstraintInput = true;
-        void OnXConstraintCanceled(InputAction.CallbackContext context) => m_XConstraintInput = false;
-
-        void OnYConstraintPerformed(InputAction.CallbackContext context) => m_YConstraintInput = true;
-        void OnYConstraintCanceled(InputAction.CallbackContext context) => m_YConstraintInput = false;
-
-        void OnZConstraintPerformed(InputAction.CallbackContext context) => m_ZConstraintInput = true;
-        void OnZConstraintCanceled(InputAction.CallbackContext context) => m_ZConstraintInput = false;
-
-        void OnResetPerformed(InputAction.CallbackContext context) => m_ResetInput = true;
-        void OnResetCanceled(InputAction.CallbackContext context) => m_ResetInput = false;
-
-        void OnToggleCursorLockPerformed(InputAction.CallbackContext context) => Cursor.lockState = Negate(Cursor.lockState);
-
-        void OnToggleDevicePositionTargetPerformed(InputAction.CallbackContext context) => axis2DTargets ^= Axis2DTargets.Position;
-
-        void OnTogglePrimary2DAxisTargetPerformed(InputAction.CallbackContext context) => axis2DTargets ^= Axis2DTargets.Primary2DAxis;
-
-        void OnToggleSecondary2DAxisTargetPerformed(InputAction.CallbackContext context) => axis2DTargets ^= Axis2DTargets.Secondary2DAxis;
-
-        void OnAxis2DPerformed(InputAction.CallbackContext context) => m_Axis2DInput = Vector2.ClampMagnitude(context.ReadValue<Vector2>(), 1f);
-        void OnAxis2DCanceled(InputAction.CallbackContext context) => m_Axis2DInput = Vector2.zero;
-
-        void OnRestingHandAxis2DPerformed(InputAction.CallbackContext context) => m_RestingHandAxis2DInput = Vector2.ClampMagnitude(context.ReadValue<Vector2>(), 1f);
-        void OnRestingHandAxis2DCanceled(InputAction.CallbackContext context) => m_RestingHandAxis2DInput = Vector2.zero;
-
-        void OnGripPerformed(InputAction.CallbackContext context) => m_GripInput = true;
-        void OnGripCanceled(InputAction.CallbackContext context) => m_GripInput = false;
-
-        void OnTriggerPerformed(InputAction.CallbackContext context) => m_TriggerInput = true;
-        void OnTriggerCanceled(InputAction.CallbackContext context) => m_TriggerInput = false;
-
-        void OnPrimaryButtonPerformed(InputAction.CallbackContext context) => m_PrimaryButtonInput = true;
-        void OnPrimaryButtonCanceled(InputAction.CallbackContext context) => m_PrimaryButtonInput = false;
-
-        void OnSecondaryButtonPerformed(InputAction.CallbackContext context) => m_SecondaryButtonInput = true;
-        void OnSecondaryButtonCanceled(InputAction.CallbackContext context) => m_SecondaryButtonInput = false;
-
-        void OnMenuPerformed(InputAction.CallbackContext context) => m_MenuInput = true;
-        void OnMenuCanceled(InputAction.CallbackContext context) => m_MenuInput = false;
-
-        void OnPrimary2DAxisClickPerformed(InputAction.CallbackContext context) => m_Primary2DAxisClickInput = true;
-        void OnPrimary2DAxisClickCanceled(InputAction.CallbackContext context) => m_Primary2DAxisClickInput = false;
-
-        void OnSecondary2DAxisClickPerformed(InputAction.CallbackContext context) => m_Secondary2DAxisClickInput = true;
-        void OnSecondary2DAxisClickCanceled(InputAction.CallbackContext context) => m_Secondary2DAxisClickInput = false;
-
-        void OnPrimary2DAxisTouchPerformed(InputAction.CallbackContext context) => m_Primary2DAxisTouchInput = true;
-        void OnPrimary2DAxisTouchCanceled(InputAction.CallbackContext context) => m_Primary2DAxisTouchInput = false;
-
-        void OnSecondary2DAxisTouchPerformed(InputAction.CallbackContext context) => m_Secondary2DAxisTouchInput = true;
-        void OnSecondary2DAxisTouchCanceled(InputAction.CallbackContext context) => m_Secondary2DAxisTouchInput = false;
-
-        void OnPrimaryTouchPerformed(InputAction.CallbackContext context) => m_PrimaryTouchInput = true;
-        void OnPrimaryTouchCanceled(InputAction.CallbackContext context) => m_PrimaryTouchInput = false;
-
-        void OnSecondaryTouchPerformed(InputAction.CallbackContext context) => m_SecondaryTouchInput = true;
-        void OnSecondaryTouchCanceled(InputAction.CallbackContext context) => m_SecondaryTouchInput = false;
 
         static InputAction GetInputAction(InputActionReference actionReference)
         {
