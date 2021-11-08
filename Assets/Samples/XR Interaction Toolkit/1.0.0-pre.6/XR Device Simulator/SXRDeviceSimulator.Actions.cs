@@ -372,7 +372,7 @@ namespace UnityEngine.XR.Interaction.Toolkit.Inputs.Simulation
 
 
         //==============================================================
-
+        /*
 
         [SerializeField]
         [Tooltip("The Input System Action used to translate or rotate the left hand by a scaled amount along or about the x- and y-axes. Must be a Value Vector2 Control.")]
@@ -417,9 +417,9 @@ namespace UnityEngine.XR.Interaction.Toolkit.Inputs.Simulation
             }
         }
 
+        */
 
-
-
+        /*
         void SubscribeManipulateLeftHandAction() => Subscribe(m_ManipulateLeftHandAction, OnManipulateLeftHandPerformed, OnManipulateLeftHandCanceled);
         void UnsubscribeManipulateLeftHandAction() => Unsubscribe(m_ManipulateLeftHandAction, OnManipulateLeftHandPerformed, OnManipulateLeftHandCanceled);
 
@@ -446,7 +446,7 @@ namespace UnityEngine.XR.Interaction.Toolkit.Inputs.Simulation
 
         }
         void OnManipulateHeadCanceled(InputAction.CallbackContext context) => m_ManipulateHeadInput = Vector2.zero;
-
+        */
         
     }
 }

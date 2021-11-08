@@ -270,7 +270,7 @@ namespace UnityEngine.XR.Interaction.Toolkit.Inputs.Simulation
         //test
         public float stuff;
 
-
+        /*
         Vector2 m_ManipulateLeftHandInput;
         Vector2 m_ManipulateRightHandInput;
         Vector2 m_ManipulateHeadInput;
@@ -279,11 +279,11 @@ namespace UnityEngine.XR.Interaction.Toolkit.Inputs.Simulation
 
         bool m_RotateModeOverrideInput;
         bool m_NegateModeInput;
-
+        */
         bool m_XConstraintInput;
         bool m_YConstraintInput;
         bool m_ZConstraintInput;
-
+        /*
         bool m_ResetInput;
 
 
@@ -292,7 +292,7 @@ namespace UnityEngine.XR.Interaction.Toolkit.Inputs.Simulation
         bool m_PrimaryButtonInput;
         bool m_MenuInput;
         bool m_Primary2DAxisClickInput;
-
+        */
 
         Vector3 m_LeftControllerEuler;
         Vector3 m_RightControllerEuler;
@@ -352,12 +352,6 @@ namespace UnityEngine.XR.Interaction.Toolkit.Inputs.Simulation
             SubscribeOculusButtonAction();
             SubscribeMenuButtonAction();
 
-            SubscribeManipulateLeftHandAction();
-            SubscribeManipulateRightHandAction();
-            SubscribeManipulateHeadAction();
-
-
-
         }
 
         /// <summary>
@@ -381,12 +375,7 @@ namespace UnityEngine.XR.Interaction.Toolkit.Inputs.Simulation
             UnsubscribeButtonYAction();
             UnsubscribeOculusButtonAction();
             UnsubscribeMenuButtonAction();
-
-            UnsubscribeManipulateLeftHandAction();
-            UnsubscribeManipulateRightHandAction();
-            UnsubscribeManipulateHeadAction();
-
-
+ 
         }
 
         /// <summary>
@@ -459,19 +448,19 @@ namespace UnityEngine.XR.Interaction.Toolkit.Inputs.Simulation
                     m_MouseScrollInput.y * m_MouseScrollTranslateSensitivity);
             */
                 var scaledManipulateLeftHandInput =
-                    new Vector3(m_ManipulateLeftHandInput.x * m_MouseXTranslateSensitivity,
-                        m_ManipulateLeftHandInput.y * m_MouseYTranslateSensitivity,
+                    new Vector3(m_LeftThumbstick.x * m_MouseXTranslateSensitivity,
+                        m_LeftThumbstick.y * m_MouseYTranslateSensitivity,
                         0);
 
                 var scaledManipulateRightHandInput =
-                    new Vector3(m_ManipulateRightHandInput.x * m_MouseXTranslateSensitivity,
-                        m_ManipulateRightHandInput.y * m_MouseYTranslateSensitivity,
+                    new Vector3(m_RightThumbstick.x * m_MouseXTranslateSensitivity,
+                        m_RightThumbstick.y * m_MouseYTranslateSensitivity,
                         0);
 
                 var scaledManipulateHeadInput =
-                    new Vector3(m_ManipulateHeadInput.x * m_MouseXTranslateSensitivity,
+                    new Vector3(m_HeadControl.x * m_MouseXTranslateSensitivity,
                         0,
-                        m_ManipulateHeadInput.y * m_MouseYTranslateSensitivity
+                        m_HeadControl.y * m_MouseYTranslateSensitivity
                         );
 
 
@@ -549,7 +538,7 @@ namespace UnityEngine.XR.Interaction.Toolkit.Inputs.Simulation
             //}
 
             // Reset
-            if (m_ResetInput)
+            if (m_Reset)
             {
                 var resetScale = GetResetScale();
 
@@ -594,18 +583,18 @@ namespace UnityEngine.XR.Interaction.Toolkit.Inputs.Simulation
             {
             // Mouse rotation
             var scaledManipulateLeftHandInput =
-                    new Vector3(m_ManipulateLeftHandInput.x * m_MouseXRotateSensitivity,
-                        m_ManipulateLeftHandInput.y * m_MouseYRotateSensitivity * (m_MouseYRotateInvert ? 1f : -1f),
+                    new Vector3(m_LeftThumbstick.x * m_MouseXRotateSensitivity,
+                        m_LeftThumbstick.y * m_MouseYRotateSensitivity * (m_MouseYRotateInvert ? 1f : -1f),
                         0);
 
                 var scaledManipulateRightHandInput =
-                    new Vector3(m_ManipulateRightHandInput.x * m_MouseXRotateSensitivity,
-                        m_ManipulateRightHandInput.y * m_MouseYRotateSensitivity * (m_MouseYRotateInvert ? 1f : -1f),
+                    new Vector3(m_RightThumbstick.x * m_MouseXRotateSensitivity,
+                        m_RightThumbstick.y * m_MouseYRotateSensitivity * (m_MouseYRotateInvert ? 1f : -1f),
                         0);
 
                 var scaledManipulateHeadInput =
-                    new Vector3(m_ManipulateHeadInput.x * m_MouseXRotateSensitivity,
-                        m_ManipulateHeadInput.y * m_MouseYRotateSensitivity * (m_MouseYRotateInvert ? 1f : -1f),
+                    new Vector3(m_HeadControl.x * m_MouseXRotateSensitivity,
+                        m_HeadControl.y * m_MouseYRotateSensitivity * (m_MouseYRotateInvert ? 1f : -1f),
                         0);
 
             //Debug.Log("right = " + m_ManipulateRightHandInput);
@@ -677,7 +666,7 @@ namespace UnityEngine.XR.Interaction.Toolkit.Inputs.Simulation
 
             // Reset
     
-            if (m_ResetInput)
+            if (m_Reset)
                 {
                 Debug.Log("Reset!");
                     var resetScale = GetResetScale();
@@ -733,8 +722,8 @@ namespace UnityEngine.XR.Interaction.Toolkit.Inputs.Simulation
         /// </summary>
         protected virtual void ProcessAxis2DControlInput()
         {
-            m_LeftControllerState.primary2DAxis = m_ManipulateLeftHandInput; // m_Axis2DInput;
-            m_RightControllerState.primary2DAxis = m_ManipulateRightHandInput; // m_Axis2DInput;
+            m_LeftControllerState.primary2DAxis = m_LeftThumbstick; // m_Axis2DInput;
+            m_RightControllerState.primary2DAxis = m_RightThumbstick; // m_Axis2DInput;
         }
        
 
@@ -746,13 +735,13 @@ namespace UnityEngine.XR.Interaction.Toolkit.Inputs.Simulation
         /// <param name="controllerState">The controller state that will be processed.</param>
         protected virtual void ProcessLeftButtonControlInput(ref XRSimulatedControllerState controllerState)
         {
-            controllerState.grip = m_GripInput ? 1f : 0f;
-            controllerState.WithButton(ControllerButton.GripButton, m_GripInput);
-            controllerState.trigger = m_TriggerInput ? 1f : 0f;
-            controllerState.WithButton(ControllerButton.TriggerButton, m_TriggerInput);
-            controllerState.WithButton(ControllerButton.PrimaryButton, m_PrimaryButtonInput);
-            controllerState.WithButton(ControllerButton.MenuButton, m_MenuInput);
-            controllerState.WithButton(ControllerButton.Primary2DAxisClick, m_Primary2DAxisClickInput);
+            //controllerState.grip = m_GripInput ? 1f : 0f;
+            //controllerState.WithButton(ControllerButton.GripButton, m_LeftGrip);
+            //controllerState.trigger = m_TriggerInput ? 1f : 0f;
+            //controllerState.WithButton(ControllerButton.TriggerButton, m_LeftTrigger);
+            //controllerState.WithButton(ControllerButton.PrimaryButton, ???);
+            controllerState.WithButton(ControllerButton.MenuButton, m_MenuButton);
+            //controllerState.WithButton(ControllerButton.Primary2DAxisClick, ???);
         }
 
         /// <summary>
@@ -762,13 +751,13 @@ namespace UnityEngine.XR.Interaction.Toolkit.Inputs.Simulation
         /// <param name="controllerState">The controller state that will be processed.</param>
         protected virtual void ProcessRightButtonControlInput(ref XRSimulatedControllerState controllerState)
         {
-            controllerState.grip = m_GripInput ? 1f : 0f;
-            controllerState.WithButton(ControllerButton.GripButton, m_GripInput);
-            controllerState.trigger = m_TriggerInput ? 1f : 0f;
-            controllerState.WithButton(ControllerButton.TriggerButton, m_TriggerInput);
-            controllerState.WithButton(ControllerButton.PrimaryButton, m_PrimaryButtonInput);
-            controllerState.WithButton(ControllerButton.MenuButton, m_MenuInput);
-            controllerState.WithButton(ControllerButton.Primary2DAxisClick, m_Primary2DAxisClickInput);
+            //controllerState.grip = m_GripInput ? 1f : 0f;
+            //controllerState.WithButton(ControllerButton.GripButton, m_RightGrip);
+            //controllerState.trigger = m_TriggerInput ? 1f : 0f;
+            //controllerState.WithButton(ControllerButton.TriggerButton, m_RightTrigger);
+            ///controllerState.WithButton(ControllerButton.PrimaryButton, ???);
+            controllerState.WithButton(ControllerButton.MenuButton, m_OculusButton);
+            //controllerState.WithButton(ControllerButton.Primary2DAxisClick, ???);
 
         }
 
