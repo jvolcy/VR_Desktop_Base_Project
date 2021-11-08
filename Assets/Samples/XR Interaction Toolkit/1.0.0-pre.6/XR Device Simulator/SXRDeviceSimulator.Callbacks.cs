@@ -39,12 +39,27 @@ namespace UnityEngine.XR.Interaction.Toolkit.Inputs.Simulation
         *  ======================================================================= */
         protected virtual void Awake()
         {
+            //reset the 3 devices
             m_HMDState.Reset();
             m_LeftControllerState.Reset();
             m_RightControllerState.Reset();
 
-            m_LeftControllerState.devicePosition += new Vector3(-0.1f, 0f, 0f);
-            m_RightControllerState.devicePosition += new Vector3(0.1f, 0f, 0f);
+            //store the starting position for the 3 devices
+            m_LeftHandStartingPosition = m_LeftControllerState.devicePosition;
+            m_RightHandStartingPosition = m_RightControllerState.devicePosition;
+            m_HeadStartingPosition = m_HMDState.devicePosition;
+
+            //reset position and orientation
+            ResetLocation(true, true);
+
+
+            // Set tracked states
+            m_LeftControllerState.isTracked = true;
+            m_RightControllerState.isTracked = true;
+            m_HMDState.isTracked = true;
+            m_LeftControllerState.trackingState = (int)(InputTrackingState.Position | InputTrackingState.Rotation);
+            m_RightControllerState.trackingState = (int)(InputTrackingState.Position | InputTrackingState.Rotation);
+            m_HMDState.trackingState = (int)(InputTrackingState.Position | InputTrackingState.Rotation);
 
         }
 
@@ -54,6 +69,7 @@ namespace UnityEngine.XR.Interaction.Toolkit.Inputs.Simulation
         *  ======================================================================= */
         protected virtual void OnEnable()
         {
+            /*
             // Find the Camera if necessary
             if (m_CameraTransform == null)
             {
@@ -61,6 +77,7 @@ namespace UnityEngine.XR.Interaction.Toolkit.Inputs.Simulation
                 if (mainCamera != null)
                     m_CameraTransform = mainCamera.transform;
             }
+            */
 
             AddDevices();
 
@@ -110,8 +127,7 @@ namespace UnityEngine.XR.Interaction.Toolkit.Inputs.Simulation
         *  ======================================================================= */
         protected virtual void Update()
         {
-            ProcessPoseInput();
-            ProcessControlInput();
+            ProcessControlInputs();
 
             if (m_HMDDevice != null)
             {

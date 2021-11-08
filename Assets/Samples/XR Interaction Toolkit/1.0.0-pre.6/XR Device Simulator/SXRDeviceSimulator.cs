@@ -60,83 +60,55 @@ namespace UnityEngine.XR.Interaction.Toolkit.Inputs.Simulation
     [HelpURL(XRHelpURLConstants.k_XRDeviceSimulator)]
     public partial class SXRDeviceSimulator : MonoBehaviour
     {
-        /// <summary>
-        /// The coordinate space in which to operate.
-        /// </summary>
-        /// <seealso cref="keyboardTranslateSpace"/>
-        /// <seealso cref="mouseTranslateSpace"/>
-        public enum Space
-        {
-            /// <summary>
-            /// Applies translations of a controller or HMD relative to its own coordinate space, considering its own rotations.
-            /// Will translate a controller relative to itself, independent of the camera.
-            /// </summary>
-            Local,
+        //---------- Constants ----------
+        const float DEFAULT_HEAD_X_SENSITIVITY = 1f;
+        const float DEFAULT_HEAD_Y_SENSITIVITY = 1f;
 
-            /// <summary>
-            /// Applies translations of a controller or HMD relative to its parent. If the object does not have a parent, meaning
-            /// it is a root object, the parent coordinate space is the same as the world coordinate space. This is the same
-            /// as <see cref="Local"/> but without considering its own rotations.
-            /// </summary>
-            Parent,
+        const float DEFAULT_HAND_X_SENSITIVITY = 0.5f;
+        const float DEFAULT_HAND_Y_SENSITIVITY = 0.5f;
 
-            /// <summary>
-            /// Applies translations of a controller or HMD relative to the screen.
-            /// Will translate a controller relative to the camera, independent of the controller's orientation.
-            /// </summary>
-            Screen,
-        }
+        const float DEFAULT_DISTANCE_BETWEEN_HANDS = 0.2f;
 
-        /// <summary>
-        /// The transformation mode in which to operate.
-        /// </summary>
-        /// <seealso cref="mouseTransformationMode"/>
-        public enum TransformationMode
-        {
-            /// <summary>
-            /// Applies translations from input.
-            /// </summary>
-            Translate,
-
-            /// <summary>
-            /// Applies rotations from input.
-            /// </summary>
-            Rotate,
-        }
+        //---------- Input Action Variables ----------
+        bool m_Reset;               //keyboard ('V')
+        Vector2 m_RightThumbstick;  //gampad/Xbox right joystick
+        Vector2 m_LeftThumbstick;   //gampad/Xbox left joytick
+        Vector2 m_HeadControl;      //gampad/Xbox D-pad
+        float m_LeftGrip;           //gampad/Xbox left trigger
+        float m_RightGrip;          //gampad/Xbox right trigger
+        float m_LeftTrigger;        //gampad/Xbox left bumper/shoulder
+        float m_RightTrigger;       //gampad/Xbox right bumper/shoulder
+        bool m_ButtonA;             //gampad/Xbox Button A (south)
+        bool m_ButtonB;             //gampad/Xbox Button B (east)
+        bool m_ButtonX;             //gampad/Xbox Button X (west)
+        bool m_ButtonY;             //gampad/Xbox Button Y (north)
+        bool m_OculusButton;        //gampad/Xbox Select button
+        bool m_MenuButton;          //gampad/Xbox Start/menu button
 
 
-
-        bool m_Reset;
-        Vector2 m_RightThumbstick;
-        Vector2 m_LeftThumbstick;
-        Vector2 m_HeadControl;
-        float m_LeftGrip;
-        float m_RightGrip;
-        float m_LeftTrigger;
-        float m_RightTrigger;
-        bool m_ButtonA;
-        bool m_ButtonB;
-        bool m_ButtonX;
-        bool m_ButtonY;
-        bool m_OculusButton;
-        bool m_MenuButton;
-
-
-        Vector3 m_LeftControllerEuler;
-        Vector3 m_RightControllerEuler;
-        Vector3 m_CenterEyeEuler;
-
-        XRSimulatedHMDState m_HMDState;
-        XRSimulatedControllerState m_LeftControllerState;
-        XRSimulatedControllerState m_RightControllerState;
-
+        //---------- Devices ----------
         XRSimulatedHMD m_HMDDevice;
         XRSimulatedController m_LeftControllerDevice;
         XRSimulatedController m_RightControllerDevice;
 
+        //---------- Device States ----------
+        XRSimulatedHMDState m_HMDState;
+        XRSimulatedControllerState m_LeftControllerState;
+        XRSimulatedControllerState m_RightControllerState;
+
+        //---------- Device Euler Angles ----------
+        Vector3 m_LeftControllerEuler;
+        Vector3 m_RightControllerEuler;
+        Vector3 m_CenterEyeEuler;
+
+        //---------- Misc Members ----------
+        Vector3 m_HeadStartingPosition;
+        Vector3 m_LeftHandStartingPosition;
+        Vector3 m_RightHandStartingPosition;
 
 
-
+        //---------- Inspector Params ----------
+        /*
         [SerializeField]
         [Tooltip("The Transform that contains the Camera. This is usually the \"Head\" of XR rigs. Automatically set to the first enabled camera tagged MainCamera if unset.")]
         Transform m_CameraTransform;
@@ -149,118 +121,96 @@ namespace UnityEngine.XR.Interaction.Toolkit.Inputs.Simulation
             get => m_CameraTransform;
             set => m_CameraTransform = value;
         }
-
-
-        [SerializeField]
-        [Tooltip("The coordinate space in which mouse translation should operate.")]
-        Space m_MouseTranslateSpace = Space.Screen;
-        /// <summary>
-        /// The coordinate space in which mouse translation should operate.
-        /// </summary>
-        /// <seealso cref="Space"/>
-        /// <seealso cref="keyboardTranslateSpace"/>
-        public Space mouseTranslateSpace
-        {
-            get => m_MouseTranslateSpace;
-            set => m_MouseTranslateSpace = value;
-        }
-
+        */
 
         [SerializeField]
-        [Tooltip("Sensitivity of translation in the x-axis (left/right) when triggered by mouse input.")]
-        float m_MouseXTranslateSensitivity = 0.0004f;
+        [Tooltip("Sensitivity of head rotation along the x-axis (pitch).")]
+        float m_XHeadRotateSensitivity = DEFAULT_HEAD_X_SENSITIVITY;
         /// <summary>
-        /// Sensitivity of translation in the x-axis (left/right) when triggered by mouse input.
+        /// Sensitivity of rotation along the x-axis (pitch).
         /// </summary>
-        /// <seealso cref="mouseDeltaAction"/>
-        /// <seealso cref="mouseYTranslateSensitivity"/>
-        /// <seealso cref="mouseScrollTranslateSensitivity"/>
-        public float mouseXTranslateSensitivity
+        /// <seealso cref="YHeadRotateSensitivity"/>
+        public float XHeadRotateSensitivity
         {
-            get => m_MouseXTranslateSensitivity;
-            set => m_MouseXTranslateSensitivity = value;
+            get => m_XHeadRotateSensitivity;
+            set => m_XHeadRotateSensitivity = value;
         }
 
         [SerializeField]
-        [Tooltip("Sensitivity of translation in the y-axis (up/down) when triggered by mouse input.")]
-        float m_MouseYTranslateSensitivity = 0.0004f;
+        [Tooltip("Sensitivity of head rotation along the y-axis (yaw).")]
+        float m_YHeadRotateSensitivity = DEFAULT_HEAD_Y_SENSITIVITY;
         /// <summary>
-        /// Sensitivity of translation in the y-axis (up/down) when triggered by mouse input.
+        /// Sensitivity of rotation along the y-axis (yaw).
         /// </summary>
-        /// <seealso cref="mouseDeltaAction"/>
-        /// <seealso cref="mouseXTranslateSensitivity"/>
-        /// <seealso cref="mouseScrollTranslateSensitivity"/>
-        public float mouseYTranslateSensitivity
+        /// <seealso cref="XHeadRotateSensitivity"/>
+        public float YHeadRotateSensitivity
         {
-            get => m_MouseYTranslateSensitivity;
-            set => m_MouseYTranslateSensitivity = value;
-        }
-
-
-        [SerializeField]
-        [Tooltip("Sensitivity of rotation along the x-axis (pitch) when triggered by mouse input.")]
-        float m_MouseXRotateSensitivity = 0.1f;
-        /// <summary>
-        /// Sensitivity of rotation along the x-axis (pitch) when triggered by mouse input.
-        /// </summary>
-        /// <seealso cref="mouseDeltaAction"/>
-        /// <seealso cref="mouseYRotateSensitivity"/>
-        /// <seealso cref="mouseScrollRotateSensitivity"/>
-        public float mouseXRotateSensitivity
-        {
-            get => m_MouseXRotateSensitivity;
-            set => m_MouseXRotateSensitivity = value;
+            get => m_YHeadRotateSensitivity;
+            set => m_YHeadRotateSensitivity = value;
         }
 
         [SerializeField]
-        [Tooltip("Sensitivity of rotation along the y-axis (yaw) when triggered by mouse input.")]
-        float m_MouseYRotateSensitivity = 0.1f;
-        /// <summary>
-        /// Sensitivity of rotation along the y-axis (yaw) when triggered by mouse input.
-        /// </summary>
-        /// <seealso cref="mouseDeltaAction"/>
-        /// <seealso cref="mouseXRotateSensitivity"/>
-        /// <seealso cref="mouseScrollRotateSensitivity"/>
-        public float mouseYRotateSensitivity
-        {
-            get => m_MouseYRotateSensitivity;
-            set => m_MouseYRotateSensitivity = value;
-        }
-
-        [SerializeField]
-        [Tooltip("Sensitivity of rotation along the z-axis (roll) when triggered by mouse scroll input.")]
-        float m_MouseScrollRotateSensitivity = 0.05f;
-        /// <summary>
-        /// Sensitivity of rotation along the z-axis (roll) when triggered by mouse scroll input.
-        /// </summary>
-        /// <seealso cref="mouseScrollAction"/>
-        /// <seealso cref="mouseXRotateSensitivity"/>
-        /// <seealso cref="mouseYRotateSensitivity"/>
-        public float mouseScrollRotateSensitivity
-        {
-            get => m_MouseScrollRotateSensitivity;
-            set => m_MouseScrollRotateSensitivity = value;
-        }
-
-        [SerializeField]
-        [Tooltip("A boolean value of whether to invert the y-axis of mouse input when rotating by mouse input." +
-            "\nA false value (default) means typical FPS style where moving the mouse up/down pitches up/down." +
-            "\nA true value means flight control style where moving the mouse up/down pitches down/up.")]
-        bool m_MouseYRotateInvert;
+        [Tooltip("A boolean value of whether to invert the head y-axis." +
+    "\nA false value (default) means typical FPS style where moving up/down pitches up/down." +
+    "\nA true value means flight control style where moving up/down pitches down/up.")]
+        bool m_InvertHeadY = false;
         /// <summary>
         /// A boolean value of whether to invert the y-axis of mouse input when rotating by mouse input.
         /// A <see langword="false"/> value (default) means typical FPS style where moving the mouse up/down pitches up/down.
         /// A <see langword="true"/> value means flight control style where moving the mouse up/down pitches down/up.
         /// </summary>
-        public bool mouseYRotateInvert
+        public bool InvertHeadY
         {
-            get => m_MouseYRotateInvert;
-            set => m_MouseYRotateInvert = value;
+            get => m_InvertHeadY;
+            set => m_InvertHeadY = value;
         }
 
 
+        [SerializeField]
+        [Tooltip("Sensitivity of hand rotation along the x-axis (pitch).")]
+        float m_XHandRotateSensitivity = DEFAULT_HAND_X_SENSITIVITY;
+        /// <summary>
+        /// Sensitivity of rotation along the x-axis (pitch).
+        /// </summary>
+        /// <seealso cref="YHandRotateSensitivity"/>
+        public float XHandRotateSensitivity
+        {
+            get => m_XHandRotateSensitivity;
+            set => m_XHandRotateSensitivity = value;
+        }
 
+        [SerializeField]
+        [Tooltip("Sensitivity of hand rotation along the y-axis (yaw).")]
+        float m_YHandRotateSensitivity = DEFAULT_HAND_Y_SENSITIVITY;
+        /// <summary>
+        /// Sensitivity of rotation along the y-axis (yaw).
+        /// </summary>
+        /// <seealso cref="XHandRotateSensitivity"/>
+        public float YHandRotateSensitivity
+        {
+            get => m_YHandRotateSensitivity;
+            set => m_YHandRotateSensitivity = value;
+        }
+
+        [SerializeField]
+        [Tooltip("A boolean value of whether to invert the hadn y-axis." +
+            "\nA false value (default) means typical FPS style where moving up/down pitches up/down." +
+            "\nA true value means flight control style where moving up/down pitches down/up.")]
+        bool m_InvertHandY = false;
+        /// <summary>
+        /// A boolean value of whether to invert the y-axis of mouse input when rotating by mouse input.
+        /// A <see langword="false"/> value (default) means typical FPS style where moving the mouse up/down pitches up/down.
+        /// A <see langword="true"/> value means flight control style where moving the mouse up/down pitches down/up.
+        /// </summary>
+        public bool InvertHandY
+        {
+            get => m_InvertHandY;
+            set => m_InvertHandY = value;
+        }
 
 
     }
 }
+
+
+//----------  ----------

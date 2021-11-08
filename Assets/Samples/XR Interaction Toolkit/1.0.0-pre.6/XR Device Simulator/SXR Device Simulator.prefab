@@ -72,15 +72,10 @@ MonoBehaviour:
   m_ButtonYAction: {fileID: -1541339102641228442, guid: da2b439d1a2de5c46a4f428f8cf4fe19, type: 3}
   m_OculusButtonAction: {fileID: 7243888519457805272, guid: da2b439d1a2de5c46a4f428f8cf4fe19, type: 3}
   m_MenuButtonAction: {fileID: -7014268008975100455, guid: da2b439d1a2de5c46a4f428f8cf4fe19, type: 3}
-  m_ManipulateLeftHandAction: {fileID: -2497764405573983026, guid: da2b439d1a2de5c46a4f428f8cf4fe19, type: 3}
-  m_ManipulateRightHandAction: {fileID: 7003695688846806427, guid: da2b439d1a2de5c46a4f428f8cf4fe19, type: 3}
-  m_ManipulateHeadAction: {fileID: -5695374239266865918, guid: da2b439d1a2de5c46a4f428f8cf4fe19, type: 3}
   m_CameraTransform: {fileID: 0}
-  m_MouseTranslateSpace: 2
-  m_MouseXTranslateSensitivity: 0.0004
-  m_MouseYTranslateSensitivity: 0.0004
-  m_MouseXRotateSensitivity: 0.1
-  m_MouseYRotateSensitivity: 0.1
-  m_MouseScrollRotateSensitivity: 0.05
-  m_MouseYRotateInvert: 0
-  stuff: 0
+  m_XHeadRotateSensitivity: 1
+  m_YHeadRotateSensitivity: 1
+  m_InvertHeadY: 0
+  m_XHandRotateSensitivity: 0.5
+  m_YHandRotateSensitivity: 0.5
+  m_InvertHandY: 0

@@ -370,7 +370,49 @@ namespace UnityEngine.XR.Interaction.Toolkit.Inputs.Simulation
         void OnMenuButtonCanceled(InputAction.CallbackContext context) => m_MenuButton = false;
 
 
-      
-        
+
+
+        /* ==========================================================================
+        *  Subscribe()
+        *  ======================================================================= */
+        static void Subscribe(InputActionReference reference, Action<InputAction.CallbackContext> performed = null, Action<InputAction.CallbackContext> canceled = null)
+        {
+            var action = GetInputAction(reference);
+            if (action != null)
+            {
+                if (performed != null)
+                    action.performed += performed;
+                if (canceled != null)
+                    action.canceled += canceled;
+            }
+        }
+
+
+        /* ==========================================================================
+        *  Unsubscribe()
+        *  ======================================================================= */
+        static void Unsubscribe(InputActionReference reference, Action<InputAction.CallbackContext> performed = null, Action<InputAction.CallbackContext> canceled = null)
+        {
+            var action = GetInputAction(reference);
+            if (action != null)
+            {
+                if (performed != null)
+                    action.performed -= performed;
+                if (canceled != null)
+                    action.canceled -= canceled;
+            }
+        }
+
+        /* ==========================================================================
+        *  GetInputAction()
+        *  ======================================================================= */
+        static InputAction GetInputAction(InputActionReference actionReference)
+        {
+            #pragma warning disable IDE0031 // Use null propagation -- Do not use for UnityEngine.Object types
+            return actionReference != null ? actionReference.action : null;
+            #pragma warning restore IDE0031
+        }
+
+
     }
 }
